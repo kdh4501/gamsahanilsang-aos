@@ -1,0 +1,11 @@
+package com.dhkim.gamsahanilsang.domain.usecase
+
+import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
+import com.dhkim.gamsahanilsang.domain.repository.GratitudeRepository
+
+class SaveGratitudeUseCase(private val repository: GratitudeRepository) {
+    fun execute(text: String) {
+        val item = GratitudeItem(gratitudeText = text)
+        repository.saveGratitude(item)
+    }
+}

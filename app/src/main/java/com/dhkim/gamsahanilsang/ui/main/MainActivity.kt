@@ -60,6 +60,8 @@ class MainActivity : AppCompatActivity() {
                 editTextGratitude.text.clear()
             }
         }
+
+        loadGratitudes()
     }
 
     private fun saveGratitude(text: String) {

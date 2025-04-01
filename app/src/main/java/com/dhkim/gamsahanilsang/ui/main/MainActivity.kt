@@ -10,13 +10,17 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dhkim.gamsahanilsang.R
-import com.dhkim.gamsahanilsang.data.repository.InMemoryGratitudeRepository
+import com.dhkim.gamsahanilsang.data.database.AppDatabase
+import com.dhkim.gamsahanilsang.data.repository.RoomGratitudeRepository
+import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.repository.GratitudeRepository
 import com.dhkim.gamsahanilsang.domain.usecase.SaveGratitudeUseCase
 import com.dhkim.gamsahanilsang.ui.adapter.GratitudeAdapter
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var editTextGratitude: EditText
@@ -24,7 +28,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recyclerViewGratitude: RecyclerView
     private lateinit var adapter: GratitudeAdapter
     private lateinit var saveGratitudeUseCase: SaveGratitudeUseCase
-    private lateinit var gratitudeRepository: GratitudeRepository
+
+    private val gratitudeDao by lazy { AppDatabase.getDatabase(this).gratitudeDao() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,14 +41,14 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        gratitudeRepository = InMemoryGratitudeRepository()
-        saveGratitudeUseCase = SaveGratitudeUseCase(gratitudeRepository)
+        val repository = RoomGratitudeRepository(gratitudeDao)
+        saveGratitudeUseCase = SaveGratitudeUseCase(repository)
 
         editTextGratitude = findViewById(R.id.editTextGratitude)
         buttonSave = findViewById(R.id.buttonSave)
         recyclerViewGratitude = findViewById(R.id.recyclerViewGratitude)
 
-        adapter = GratitudeAdapter(gratitudeRepository.getAllGratitudes())
+        adapter = GratitudeAdapter(emptyList())
         recyclerViewGratitude.layoutManager = LinearLayoutManager(this)
         recyclerViewGratitude.adapter = adapter
 
@@ -58,11 +63,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun saveGratitude(text: String) {
-        saveGratitudeUseCase.execute(text)
-        val updatedList = gratitudeRepository.getAllGratitudes()
-        Log.d("MainActivity", "Updated List: $updatedList") // 데이터 확인
-        adapter.updateData(gratitudeRepository.getAllGratitudes())
-        recyclerViewGratitude.scrollToPosition(adapter.itemCount - 1)
+        val item = GratitudeItem(gratitudeText = text)
+        lifecycleScope.launch {
+            saveGratitudeUseCase.execute(item)
+            loadGratitudes()
+            showSaveAnimation()
+        }
+    }
+
+    private fun loadGratitudes() {
+        lifecycleScope.launch {
+            val gratitudeList = saveGratitudeUseCase.getAllGratitudes() // 모든 감사한 일 로드
+            adapter.updateData(gratitudeList)
+        }
     }
 
     private fun showSaveAnimation() {

@@ -1,8 +1,10 @@
 package com.dhkim.gamsahanilsang.domain.entity
 
-import org.w3c.dom.Text
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
+@Entity(tableName = "gratitude_items")
 data class GratitudeItem(
-    val id: Long = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val gratitudeText: String
 )

@@ -1,4 +1,4 @@
-package com.dhkim.gamsahanilsang.ui.adapter
+package com.dhkim.gamsahanilsang.presentation.adapter
 
 import android.util.Log
 import android.view.LayoutInflater

@@ -1,4 +1,4 @@
-package com.dhkim.gamsahanilsang.ui.main
+package com.dhkim.gamsahanilsang.presentation.main
 
 import android.os.Bundle
 import android.view.animation.AlphaAnimation
@@ -17,7 +17,7 @@ import com.dhkim.gamsahanilsang.data.database.AppDatabase
 import com.dhkim.gamsahanilsang.data.repository.RoomGratitudeRepository
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.usecase.SaveGratitudeUseCase
-import com.dhkim.gamsahanilsang.ui.adapter.GratitudeAdapter
+import com.dhkim.gamsahanilsang.presentation.adapter.GratitudeAdapter
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {

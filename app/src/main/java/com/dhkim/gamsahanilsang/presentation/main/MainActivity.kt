@@ -68,7 +68,6 @@ class MainActivity : AppCompatActivity() {
             val gratitudeText = editTextGratitude.text.toString()
             if (gratitudeText.isNotBlank()) {
                 viewModel.saveGratitude(gratitudeText)
-                viewModel.loadGratitudes()
                 showSaveAnimation()
                 hideKeyboard()
                 editTextGratitude.text.clear()
@@ -78,9 +77,7 @@ class MainActivity : AppCompatActivity() {
         btnDeleteAll.setOnClickListener {
             // 데이터베이스에서 모든 감사한 일 삭제
             viewModel.deleteAllGratitudes()
-            viewModel.loadGratitudes()
         }
-
         viewModel.loadGratitudes()
     }
 

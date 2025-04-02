@@ -19,6 +19,7 @@ class MainViewModel(private  val saveGratitudeUseCase: SaveGratitudeUseCase) : V
             val currentList = _gratitudeList.value ?: emptyList()
             _gratitudeList.value = currentList + item
         }
+        loadGratitudes()
     }
 
     fun updateGratitude(item: GratitudeItem) {
@@ -38,6 +39,7 @@ class MainViewModel(private  val saveGratitudeUseCase: SaveGratitudeUseCase) : V
     fun deleteAllGratitudes() {
         viewModelScope.launch {
             saveGratitudeUseCase.deleteAllGratitude()
+            loadGratitudes()
         }
     }
 }

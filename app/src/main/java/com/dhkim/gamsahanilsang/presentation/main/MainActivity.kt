@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
 
         editTextGratitude = findViewById(R.id.editTextGratitude)
         buttonSave = findViewById(R.id.buttonSave)
+        val btnDeleteAll: Button = findViewById(R.id.btnDeleteAll)
         recyclerViewGratitude = findViewById(R.id.recyclerViewGratitude)
 
         adapter = GratitudeAdapter(emptyList()) { item ->
@@ -72,6 +73,12 @@ class MainActivity : AppCompatActivity() {
                 hideKeyboard()
                 editTextGratitude.text.clear()
             }
+        }
+
+        btnDeleteAll.setOnClickListener {
+            // 데이터베이스에서 모든 감사한 일 삭제
+            viewModel.deleteAllGratitudes()
+            viewModel.loadGratitudes()
         }
 
         viewModel.loadGratitudes()

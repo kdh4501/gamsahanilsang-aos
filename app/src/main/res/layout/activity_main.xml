@@ -39,6 +39,13 @@
       android:background="@drawable/rounded_button"
       android:textColor="@color/white" />
 
+  <Button
+      android:id="@+id/btnDeleteAll"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="전체삭제(임시버튼)"
+      android:visibility="visible" />
+
   <androidx.recyclerview.widget.RecyclerView
       android:id="@+id/recyclerViewGratitude"
       android:layout_width="match_parent"

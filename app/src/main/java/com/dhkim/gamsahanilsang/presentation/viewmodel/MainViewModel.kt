@@ -34,4 +34,10 @@ class MainViewModel(private  val saveGratitudeUseCase: SaveGratitudeUseCase) : V
             _gratitudeList.value = gratitudeList
         }
     }
+
+    fun deleteAllGratitudes() {
+        viewModelScope.launch {
+            saveGratitudeUseCase.deleteAllGratitude()
+        }
+    }
 }

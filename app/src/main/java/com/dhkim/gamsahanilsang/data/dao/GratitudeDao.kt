@@ -16,4 +16,7 @@ interface GratitudeDao {
 
     @Update
     suspend fun update(item: GratitudeItem)
+
+    @Query("DELETE FROM gratitude_items")
+    suspend fun deleteAll()
 }

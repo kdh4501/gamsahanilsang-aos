@@ -22,4 +22,8 @@ class RoomGratitudeRepository(private val dao: GratitudeDao) : GratitudeReposito
     override suspend fun update(item: GratitudeItem) {
         dao.update(item)
     }
+
+    override suspend fun deleteAllGratitude() {
+        dao.deleteAll()
+    }
 }

@@ -6,4 +6,5 @@ interface GratitudeRepository {
     suspend fun saveGratitude(item: GratitudeItem)
     suspend fun getAllGratitudes(): List<GratitudeItem>
     suspend fun update(item: GratitudeItem)
+    suspend fun deleteAllGratitude()
 }

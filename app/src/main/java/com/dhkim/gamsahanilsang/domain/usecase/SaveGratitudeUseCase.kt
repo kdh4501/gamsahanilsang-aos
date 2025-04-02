@@ -15,4 +15,8 @@ class SaveGratitudeUseCase(private val repository: GratitudeRepository) {
     suspend fun update(item: GratitudeItem) {
         repository.update(item)
     }
+
+    suspend fun deleteAllGratitude() {
+        repository.deleteAllGratitude()
+    }
 }

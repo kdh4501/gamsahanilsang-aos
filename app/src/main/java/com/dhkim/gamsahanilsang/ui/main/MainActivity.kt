@@ -1,8 +1,6 @@
 package com.dhkim.gamsahanilsang.ui.main
 
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import android.view.animation.AlphaAnimation
 import android.widget.Button
 import android.widget.EditText
@@ -18,7 +16,6 @@ import com.dhkim.gamsahanilsang.R
 import com.dhkim.gamsahanilsang.data.database.AppDatabase
 import com.dhkim.gamsahanilsang.data.repository.RoomGratitudeRepository
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
-import com.dhkim.gamsahanilsang.domain.repository.GratitudeRepository
 import com.dhkim.gamsahanilsang.domain.usecase.SaveGratitudeUseCase
 import com.dhkim.gamsahanilsang.ui.adapter.GratitudeAdapter
 import kotlinx.coroutines.launch

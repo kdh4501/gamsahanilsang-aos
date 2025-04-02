@@ -5,10 +5,12 @@ import android.view.animation.AlphaAnimation
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,6 +20,8 @@ import com.dhkim.gamsahanilsang.data.repository.RoomGratitudeRepository
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.usecase.SaveGratitudeUseCase
 import com.dhkim.gamsahanilsang.presentation.adapter.GratitudeAdapter
+import com.dhkim.gamsahanilsang.presentation.viewmodel.MainViewModel
+import com.dhkim.gamsahanilsang.presentation.viewmodel.MainViewModelFactory
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
@@ -28,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var saveGratitudeUseCase: SaveGratitudeUseCase
 
     private val gratitudeDao by lazy { AppDatabase.getDatabase(this).gratitudeDao() }
+    private val viewModel: MainViewModel by viewModels { MainViewModelFactory(saveGratitudeUseCase) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,10 +57,16 @@ class MainActivity : AppCompatActivity() {
         recyclerViewGratitude.layoutManager = LinearLayoutManager(this)
         recyclerViewGratitude.adapter = adapter
 
+        viewModel.gratitudeList.observe(this, Observer { gratitudeList ->
+            adapter.updateData(gratitudeList)
+        })
+
         buttonSave.setOnClickListener {
             val gratitudeText = editTextGratitude.text.toString()
             if (gratitudeText.isNotBlank()) {
-                saveGratitude(gratitudeText)
+//                saveGratitude(gratitudeText)
+                viewModel.saveGratitude(gratitudeText)
+                loadGratitudes()
                 showSaveAnimation()
                 editTextGratitude.text.clear()
             }
@@ -84,15 +95,6 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             saveGratitudeUseCase.update(item)
             loadGratitudes()
-        }
-    }
-
-    private fun saveGratitude(text: String) {
-        val item = GratitudeItem(gratitudeText = text)
-        lifecycleScope.launch {
-            saveGratitudeUseCase.execute(item)
-            loadGratitudes()
-            showSaveAnimation()
         }
     }
 

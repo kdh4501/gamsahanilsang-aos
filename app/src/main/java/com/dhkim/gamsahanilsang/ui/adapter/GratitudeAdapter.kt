@@ -35,8 +35,22 @@ class GratitudeAdapter(private var gratitudeList: List<GratitudeItem>) :
 
     // 데이터 업데이트 메서드
     fun updateData(newList: List<GratitudeItem>) {
+        val oldList = gratitudeList
         gratitudeList = newList // 새로운 리스트로 업데이트
-        notifyDataSetChanged()   // RecyclerView에 변경 사항 알림
+        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize(): Int = oldList.size
+
+            override fun getNewListSize(): Int = newList.size
+
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return oldList[oldItemPosition].id == newList[newItemPosition].id // ID를 비교
+            }
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return oldList[oldItemPosition] == newList[newItemPosition] // 객체의 내용 비교
+            }
+        })
+        diffResult.dispatchUpdatesTo(this) // 변경 사항을 RecyclerView에 알림
     }
 
 }

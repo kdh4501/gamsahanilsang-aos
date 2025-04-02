@@ -11,4 +11,8 @@ class SaveGratitudeUseCase(private val repository: GratitudeRepository) {
     suspend fun getAllGratitudes(): List<GratitudeItem> {
         return repository.getAllGratitudes()
     }
+
+    suspend fun update(item: GratitudeItem) {
+        repository.update(item)
+    }
 }

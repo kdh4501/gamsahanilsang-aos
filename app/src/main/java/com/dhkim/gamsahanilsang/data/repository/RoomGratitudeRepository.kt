@@ -18,4 +18,8 @@ class RoomGratitudeRepository(private val dao: GratitudeDao) : GratitudeReposito
             dao.getAll()
         }
     }
+
+    override suspend fun update(item: GratitudeItem) {
+        dao.update(item)
+    }
 }

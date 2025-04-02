@@ -7,6 +7,7 @@ import android.view.animation.AlphaAnimation
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -48,7 +49,9 @@ class MainActivity : AppCompatActivity() {
         buttonSave = findViewById(R.id.buttonSave)
         recyclerViewGratitude = findViewById(R.id.recyclerViewGratitude)
 
-        adapter = GratitudeAdapter(emptyList())
+        adapter = GratitudeAdapter(emptyList()) { item ->
+            showEditDialog(item)
+        }
         recyclerViewGratitude.layoutManager = LinearLayoutManager(this)
         recyclerViewGratitude.adapter = adapter
 
@@ -62,6 +65,29 @@ class MainActivity : AppCompatActivity() {
         }
 
         loadGratitudes()
+    }
+
+    private fun showEditDialog(item: GratitudeItem) {
+        val editText = EditText(this).apply {
+            setText(item.gratitudeText)
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("수정하기")
+            .setView(editText)
+            .setPositiveButton("확인") { _, _ ->
+                val updateText = editText.text.toString()
+                updateGratitude(item.copy(gratitudeText = updateText))
+            }
+            .setNegativeButton("최소", null)
+            .show()
+    }
+
+    private fun updateGratitude(item: GratitudeItem) {
+        lifecycleScope.launch {
+            saveGratitudeUseCase.update(item)
+            loadGratitudes()
+        }
     }
 
     private fun saveGratitude(text: String) {

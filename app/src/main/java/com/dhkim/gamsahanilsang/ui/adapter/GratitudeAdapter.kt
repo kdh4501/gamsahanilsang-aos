@@ -5,11 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import androidx.recyclerview.widget.RecyclerView
 import com.dhkim.gamsahanilsang.R
 
-class GratitudeAdapter(private var gratitudeList: List<GratitudeItem>) :
+class GratitudeAdapter(private var gratitudeList: List<GratitudeItem>, private val onItemClick: (GratitudeItem) -> Unit) :
     RecyclerView.Adapter<GratitudeAdapter.ViewHolder>(){
 
     // ViewHolder 클래스 정의
@@ -30,7 +31,11 @@ class GratitudeAdapter(private var gratitudeList: List<GratitudeItem>) :
     override fun getItemCount(): Int = gratitudeList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(gratitudeList[position])
+        val item = gratitudeList[position]
+        holder.bind(item)
+        holder.itemView.setOnClickListener {
+            onItemClick(item)
+        }
     }
 
     // 데이터 업데이트 메서드

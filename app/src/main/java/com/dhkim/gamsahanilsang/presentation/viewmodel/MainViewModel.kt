@@ -20,4 +20,18 @@ class MainViewModel(private  val saveGratitudeUseCase: SaveGratitudeUseCase) : V
             _gratitudeList.value = currentList + item
         }
     }
+
+    fun updateGratitude(item: GratitudeItem) {
+        viewModelScope.launch {
+            saveGratitudeUseCase.update(item)
+            loadGratitudes()
+        }
+    }
+
+    fun loadGratitudes() {
+        viewModelScope.launch {
+            val gratitudeList = saveGratitudeUseCase.getAllGratitudes() // 모든 감사한 일 로드
+            _gratitudeList.value = gratitudeList
+        }
+    }
 }

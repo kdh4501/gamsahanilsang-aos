@@ -64,15 +64,14 @@ class MainActivity : AppCompatActivity() {
         buttonSave.setOnClickListener {
             val gratitudeText = editTextGratitude.text.toString()
             if (gratitudeText.isNotBlank()) {
-//                saveGratitude(gratitudeText)
                 viewModel.saveGratitude(gratitudeText)
-                loadGratitudes()
+                viewModel.loadGratitudes()
                 showSaveAnimation()
                 editTextGratitude.text.clear()
             }
         }
 
-        loadGratitudes()
+        viewModel.loadGratitudes()
     }
 
     private fun showEditDialog(item: GratitudeItem) {
@@ -85,24 +84,10 @@ class MainActivity : AppCompatActivity() {
             .setView(editText)
             .setPositiveButton(getString(R.string.ok)) { _, _ ->
                 val updateText = editText.text.toString()
-                updateGratitude(item.copy(gratitudeText = updateText))
+                viewModel.updateGratitude(item.copy(gratitudeText = updateText))
             }
             .setNegativeButton(getString(R.string.cancel), null)
             .show()
-    }
-
-    private fun updateGratitude(item: GratitudeItem) {
-        lifecycleScope.launch {
-            saveGratitudeUseCase.update(item)
-            loadGratitudes()
-        }
-    }
-
-    private fun loadGratitudes() {
-        lifecycleScope.launch {
-            val gratitudeList = saveGratitudeUseCase.getAllGratitudes() // 모든 감사한 일 로드
-            adapter.updateData(gratitudeList)
-        }
     }
 
     private fun showSaveAnimation() {

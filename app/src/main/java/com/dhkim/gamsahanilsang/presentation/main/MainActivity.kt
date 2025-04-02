@@ -1,7 +1,9 @@
 package com.dhkim.gamsahanilsang.presentation.main
 
+import android.content.Context
 import android.os.Bundle
 import android.view.animation.AlphaAnimation
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import androidx.activity.enableEdgeToEdge
@@ -67,6 +69,7 @@ class MainActivity : AppCompatActivity() {
                 viewModel.saveGratitude(gratitudeText)
                 viewModel.loadGratitudes()
                 showSaveAnimation()
+                hideKeyboard()
                 editTextGratitude.text.clear()
             }
         }
@@ -94,5 +97,13 @@ class MainActivity : AppCompatActivity() {
         val animation = AlphaAnimation(0.2f, 1.0f)
         animation.duration = 500
         buttonSave.startAnimation(animation)
+    }
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val currentFocusView = currentFocus
+        if (currentFocusView != null) {
+            imm.hideSoftInputFromWindow(currentFocusView.windowToken, 0)
+        }
     }
 }

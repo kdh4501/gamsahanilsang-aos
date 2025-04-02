@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">grateful daily</string>
+
+    <string name="delete_button">Delete</string>
+    <string name="message_empty">Please enter some text.</string>
+
+    <string name="title_main">Recording a Grateful Thing</string>
+    <string name="input_hint">a grateful record</string>
+    <string name="save_button">Save</string>
+    <string name="edit_button">Edit</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+</resources>

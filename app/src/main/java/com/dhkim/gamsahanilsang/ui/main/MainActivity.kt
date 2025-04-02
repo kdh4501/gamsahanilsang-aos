@@ -70,13 +70,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         AlertDialog.Builder(this)
-            .setTitle("수정하기")
+            .setTitle(getString(R.string.edit_button))
             .setView(editText)
-            .setPositiveButton("확인") { _, _ ->
+            .setPositiveButton(getString(R.string.ok)) { _, _ ->
                 val updateText = editText.text.toString()
                 updateGratitude(item.copy(gratitudeText = updateText))
             }
-            .setNegativeButton("최소", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
 

@@ -1,20 +1,33 @@
 package com.dhkim.gamsahanilsang.presentation.main
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.animation.AlphaAnimation
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.RequiresExtension
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.runtime.collectAsState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.recyclerview.widget.RecyclerView
 import com.dhkim.gamsahanilsang.R
 import com.dhkim.gamsahanilsang.data.database.AppDatabase
@@ -24,64 +37,96 @@ import com.dhkim.gamsahanilsang.domain.usecase.SaveGratitudeUseCase
 import com.dhkim.gamsahanilsang.presentation.adapter.GratitudeAdapter
 import com.dhkim.gamsahanilsang.presentation.viewmodel.MainViewModel
 import com.dhkim.gamsahanilsang.presentation.viewmodel.MainViewModelFactory
-import kotlinx.coroutines.launch
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
+    private val gratitudeDao by lazy { AppDatabase.getDatabase(this).gratitudeDao() }
+    private val viewModel: MainViewModel by viewModels { MainViewModelFactory(saveGratitudeUseCase) }
+
     private lateinit var editTextGratitude: EditText
     private lateinit var buttonSave: Button
     private lateinit var recyclerViewGratitude: RecyclerView
     private lateinit var adapter: GratitudeAdapter
     private lateinit var saveGratitudeUseCase: SaveGratitudeUseCase
 
-    private val gratitudeDao by lazy { AppDatabase.getDatabase(this).gratitudeDao() }
-    private val viewModel: MainViewModel by viewModels { MainViewModelFactory(saveGratitudeUseCase) }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        saveGratitudeUseCase = SaveGratitudeUseCase(RoomGratitudeRepository(gratitudeDao))
+
+        setContent {
+            GratitudeApp(viewModel)
         }
 
-        val repository = RoomGratitudeRepository(gratitudeDao)
-        saveGratitudeUseCase = SaveGratitudeUseCase(repository)
-
-        editTextGratitude = findViewById(R.id.editTextGratitude)
-        buttonSave = findViewById(R.id.buttonSave)
-        val btnDeleteAll: Button = findViewById(R.id.btnDeleteAll)
-        recyclerViewGratitude = findViewById(R.id.recyclerViewGratitude)
-
-        adapter = GratitudeAdapter(emptyList()) { item ->
-            showEditDialog(item)
-        }
-        recyclerViewGratitude.layoutManager = LinearLayoutManager(this)
-        recyclerViewGratitude.adapter = adapter
-
-        viewModel.gratitudeList.observe(this, Observer { gratitudeList ->
-            adapter.updateData(gratitudeList)
-        })
-
-        buttonSave.setOnClickListener {
-            val gratitudeText = editTextGratitude.text.toString()
-            if (gratitudeText.isNotBlank()) {
-                viewModel.saveGratitude(gratitudeText)
-                showSaveAnimation()
-                hideKeyboard()
-                editTextGratitude.text.clear()
-            }
-        }
-
-        btnDeleteAll.setOnClickListener {
-            // 데이터베이스에서 모든 감사한 일 삭제
-            viewModel.deleteAllGratitudes()
-        }
         viewModel.loadGratitudes()
     }
 
-    private fun showEditDialog(item: GratitudeItem) {
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun GratitudeApp(viewModel: MainViewModel) {
+        var gratitudeText by remember { mutableStateOf("") }
+        val gratitudeList by viewModel.gratitudeList.collectAsState()
+
+        LaunchedEffect(Unit) {
+            viewModel.gratitudeList.observeForever { list ->
+                gratitudeList = list
+            }
+        }
+
+        Scaffold(
+            topBar = {
+                TopAppBar(title = { Text("Gratitude List") })
+            },
+            content = { paddingValues ->
+                Column(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize()
+                        .padding(16.dp)
+                ) {
+                    TextField(
+                        value = gratitudeText,
+                        onValueChange = { gratitudeText = it },
+                        label = { Text("Enter gratitude") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        onClick = {
+                            if (gratitudeText.isNotBlank()) {
+                                viewModel.saveGratitude(gratitudeText)
+                                gratitudeText = ""
+                                hideKeyboard()
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Save")
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    GratitudeList(gratitudeList, viewModel)
+                }
+            }
+        )
+    }
+
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
+    @Composable
+    fun GratitudeList(gratitudeList: List<GratitudeItem>, viewModel: MainViewModel) {
+        LazyColumn {
+            itemsIndexed(gratitudeList) { index, item ->
+                androidx.compose.material3.ListItem(
+                    modifier = Modifier.fillMaxWidth(), // Modifier는 올바르게 전달
+                    headlineContent = { Text(item.gratitudeText) }, // 'text' 대신 'headline' 사용
+                    trailingContent = {
+                        IconButton(onClick = { showEditDialog(item, viewModel) }) {
+                            Icon(Icons.Default.Edit, contentDescription = "Edit")
+                        }
+                    }
+                )
+            }
+        }
+    }
+
+    private fun showEditDialog(item: GratitudeItem, viewModel: MainViewModel) {
         val editText = EditText(this).apply {
             setText(item.gratitudeText)
         }
@@ -91,7 +136,7 @@ class MainActivity : AppCompatActivity() {
             .setView(editText)
             .setPositiveButton(getString(R.string.ok)) { _, _ ->
                 val updateText = editText.text.toString()
-                viewModel.updateGratitude(item.copy(gratitudeText = updateText))
+                this.viewModel.updateGratitude(item.copy(gratitudeText = updateText))
             }
             .setNegativeButton(getString(R.string.cancel), null)
             .show()
@@ -109,5 +154,11 @@ class MainActivity : AppCompatActivity() {
         if (currentFocusView != null) {
             imm.hideSoftInputFromWindow(currentFocusView.windowToken, 0)
         }
+    }
+
+    @Preview(showBackground = true)
+    @Composable
+    fun PreviewGratitudeApp() {
+        GratitudeApp(viewModel)
     }
 }

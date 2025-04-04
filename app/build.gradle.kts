@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kapt)
-    id("com.google.devtools.ksp") version "2.0.21-1.0.27" apply false
+    alias(libs.plugins.googlDevToolsKSP)
 }
 
 android {
@@ -69,5 +69,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.androidx.foundation)
     implementation(libs.androidx.activity.compose.v170)
-
+//    implementation(libs.androidx.room.compiler)
+    implementation(libs.kotlin-stdlib) // Kotlin 표준 라이브러리
+    implementation(libs.androidx.room.runtime) // Room 라이브러리
+    kapt(libs.androidx.room.compiler) // Room 컴파일러
 }

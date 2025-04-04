@@ -20,11 +20,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.runtime.collectAsState
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,6 +47,7 @@ import com.dhkim.gamsahanilsang.domain.usecase.SaveGratitudeUseCase
 import com.dhkim.gamsahanilsang.presentation.adapter.GratitudeAdapter
 import com.dhkim.gamsahanilsang.presentation.viewmodel.MainViewModel
 import com.dhkim.gamsahanilsang.presentation.viewmodel.MainViewModelFactory
+import com.tarkalabs.tarkaui.components.base.AvatarType
 
 class MainActivity : ComponentActivity() {
     private val gratitudeDao by lazy { AppDatabase.getDatabase(this).gratitudeDao() }
@@ -48,6 +59,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var adapter: GratitudeAdapter
     private lateinit var saveGratitudeUseCase: SaveGratitudeUseCase
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         saveGratitudeUseCase = SaveGratitudeUseCase(RoomGratitudeRepository(gratitudeDao))
@@ -59,21 +71,15 @@ class MainActivity : ComponentActivity() {
         viewModel.loadGratitudes()
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     @Composable
     fun GratitudeApp(viewModel: MainViewModel) {
         var gratitudeText by remember { mutableStateOf("") }
-        val gratitudeList by viewModel.gratitudeList.collectAsState()
-
-        LaunchedEffect(Unit) {
-            viewModel.gratitudeList.observeForever { list ->
-                gratitudeList = list
-            }
-        }
+        val gratitudeList by viewModel.gratitudeList.observeAsState(emptyList())
 
         Scaffold(
             topBar = {
-                TopAppBar(title = { Text("Gratitude List") })
+                TopAppBar(title = { AvatarType.Text("Gratitude List") })
             },
             content = { paddingValues ->
                 Column(
@@ -156,6 +162,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     @Preview(showBackground = true)
     @Composable
     fun PreviewGratitudeApp() {

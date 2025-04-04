@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id("kotlin-kapt")
+    alias(libs.plugins.kapt)
+    id("com.google.devtools.ksp") version "2.0.21-1.0.27" apply false
 }
 
 android {
@@ -31,8 +32,15 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.0"
+    }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+
+    buildFeatures {
+        compose = true
     }
 }
 
@@ -45,16 +53,21 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.recyclerview)
     implementation(libs.androidx.runtime.android)
-    implementation(libs.androidx.material3.android)
-    implementation(libs.androidx.ui.tooling.preview.android)
+    implementation(libs.androidx.material)
+    implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.androidx.room.runtime)
-    kapt(libs.room.compiler)
     implementation(libs.androidx.room.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx.v240)
-
     implementation(libs.tarkaui)    // UI kit
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.tooling.preview.android)
+    implementation(libs.androidx.foundation)
+    implementation(libs.androidx.activity.compose.v170)
+
 }

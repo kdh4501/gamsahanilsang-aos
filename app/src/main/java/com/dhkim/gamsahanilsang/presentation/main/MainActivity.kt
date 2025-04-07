@@ -1,3 +1,4 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
 package com.dhkim.gamsahanilsang.presentation.main
 
 import android.content.Context
@@ -20,15 +21,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -47,7 +47,12 @@ import com.dhkim.gamsahanilsang.domain.usecase.SaveGratitudeUseCase
 import com.dhkim.gamsahanilsang.presentation.adapter.GratitudeAdapter
 import com.dhkim.gamsahanilsang.presentation.viewmodel.MainViewModel
 import com.dhkim.gamsahanilsang.presentation.viewmodel.MainViewModelFactory
-import com.tarkalabs.tarkaui.components.base.AvatarType
+import com.tarkalabs.tarkaui.components.TUIAppTopBar
+import com.tarkalabs.tarkaui.components.TUISearchBar
+import com.tarkalabs.tarkaui.icons.BarcodeScanner24
+import com.tarkalabs.tarkaui.icons.ChevronRight20
+import com.tarkalabs.tarkaui.icons.Dismiss16
+import com.tarkalabs.tarkaui.icons.TarkaIcons
 
 class MainActivity : ComponentActivity() {
     private val gratitudeDao by lazy { AppDatabase.getDatabase(this).gratitudeDao() }
@@ -71,6 +76,7 @@ class MainActivity : ComponentActivity() {
         viewModel.loadGratitudes()
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     @Composable
     fun GratitudeApp(viewModel: MainViewModel) {
@@ -79,7 +85,13 @@ class MainActivity : ComponentActivity() {
 
         Scaffold(
             topBar = {
-                TopAppBar(title = { AvatarType.Text("Gratitude List") })
+                TUIAppTopBar(
+                    title = "Gratitude List",
+                    navigationIcon = TarkaIcons.Regular.ChevronRight20,
+                    menuItemIconOne = TarkaIcons.Regular.ChevronRight20,
+                    menuItemIconTwo = TarkaIcons.Regular.ChevronRight20,
+                    menuItemIconThree = TarkaIcons.Regular.ChevronRight20,
+                )
             },
             content = { paddingValues ->
                 Column(
@@ -88,11 +100,14 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .padding(16.dp)
                 ) {
-                    TextField(
-                        value = gratitudeText,
-                        onValueChange = { gratitudeText = it },
-                        label = { Text("Enter gratitude") },
-                        modifier = Modifier.fillMaxWidth()
+                    TUISearchBar(
+                        query = gratitudeText,
+                        placeholder = "Enter gratitude",
+                        onQueryTextChange = { gratitudeText = it },
+                        trailingIcon = TarkaIcons.Filled.Dismiss16,
+                        leadingIcon = TarkaIcons.Regular.BarcodeScanner24,
+                        onLeadingIconClick = { /* Handle leading icon click */ },
+                        modifier = Modifier.fillMaxWidth().padding(10.dp)
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     Button(

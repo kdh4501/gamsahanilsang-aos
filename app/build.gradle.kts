@@ -33,7 +33,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.0"
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -69,7 +69,6 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.androidx.foundation)
-    implementation(libs.androidx.activity.compose.v170)
 }
 java {
     toolchain {

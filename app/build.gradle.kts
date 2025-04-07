@@ -60,6 +60,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     implementation(libs.tarkaui)    // UI kit
     implementation(libs.androidx.lifecycle.livedata.ktx)
@@ -69,8 +70,9 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview.android)
     implementation(libs.androidx.foundation)
     implementation(libs.androidx.activity.compose.v170)
-//    implementation(libs.androidx.room.compiler)
-    implementation(libs.kotlin-stdlib) // Kotlin 표준 라이브러리
-    implementation(libs.androidx.room.runtime) // Room 라이브러리
-    kapt(libs.androidx.room.compiler) // Room 컴파일러
+}
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }

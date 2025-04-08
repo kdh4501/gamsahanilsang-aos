@@ -1,5 +1,6 @@
 package com.dhkim.gamsahanilsang.presentation.main
 
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
@@ -9,6 +10,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresExtension
 import androidx.appcompat.app.AlertDialog
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -43,6 +46,7 @@ import com.dhkim.gamsahanilsang.data.database.AppDatabase
 import com.dhkim.gamsahanilsang.data.repository.RoomGratitudeRepository
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.usecase.SaveGratitudeUseCase
+import com.dhkim.gamsahanilsang.presentation.ui.theme.MyTheme
 import com.dhkim.gamsahanilsang.presentation.viewmodel.MainViewModel
 import com.dhkim.gamsahanilsang.presentation.viewmodel.MainViewModelFactory
 
@@ -58,7 +62,9 @@ class MainActivity : ComponentActivity() {
         saveGratitudeUseCase = SaveGratitudeUseCase(RoomGratitudeRepository(gratitudeDao))
 
         setContent {
-            GratitudeApp(viewModel)
+            MyTheme {
+                GratitudeApp(viewModel)
+            }
         }
 
         viewModel.loadGratitudes()
@@ -82,6 +88,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier
                         .padding(paddingValues)
                         .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background)
                         .padding(16.dp)
                 ) {
                     OutlinedTextField(
@@ -164,7 +171,7 @@ class MainActivity : ComponentActivity() {
     }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
-    @Preview(showBackground = true)
+    @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Composable
     fun PreviewGratitudeApp() {
         GratitudeApp(viewModel)

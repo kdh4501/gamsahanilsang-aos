@@ -1,7 +1,5 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
 package com.dhkim.gamsahanilsang.presentation.main
 
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.view.animation.AlphaAnimation
@@ -22,13 +20,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -47,12 +49,6 @@ import com.dhkim.gamsahanilsang.domain.usecase.SaveGratitudeUseCase
 import com.dhkim.gamsahanilsang.presentation.adapter.GratitudeAdapter
 import com.dhkim.gamsahanilsang.presentation.viewmodel.MainViewModel
 import com.dhkim.gamsahanilsang.presentation.viewmodel.MainViewModelFactory
-import com.tarkalabs.tarkaui.components.TUIAppTopBar
-import com.tarkalabs.tarkaui.components.TUISearchBar
-import com.tarkalabs.tarkaui.icons.BarcodeScanner24
-import com.tarkalabs.tarkaui.icons.ChevronRight20
-import com.tarkalabs.tarkaui.icons.Dismiss16
-import com.tarkalabs.tarkaui.icons.TarkaIcons
 
 class MainActivity : ComponentActivity() {
     private val gratitudeDao by lazy { AppDatabase.getDatabase(this).gratitudeDao() }
@@ -85,12 +81,8 @@ class MainActivity : ComponentActivity() {
 
         Scaffold(
             topBar = {
-                TUIAppTopBar(
-                    title = "Gratitude List",
-                    navigationIcon = TarkaIcons.Regular.ChevronRight20,
-                    menuItemIconOne = TarkaIcons.Regular.ChevronRight20,
-                    menuItemIconTwo = TarkaIcons.Regular.ChevronRight20,
-                    menuItemIconThree = TarkaIcons.Regular.ChevronRight20,
+                TopAppBar(
+                    title = { Text("Gratitude List") }
                 )
             },
             content = { paddingValues ->
@@ -100,16 +92,22 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .padding(16.dp)
                 ) {
-                    TUISearchBar(
-                        query = gratitudeText,
-                        placeholder = "Enter gratitude",
-                        onQueryTextChange = { gratitudeText = it },
-                        trailingIcon = TarkaIcons.Filled.Dismiss16,
-                        leadingIcon = TarkaIcons.Regular.BarcodeScanner24,
-                        onLeadingIconClick = { /* Handle leading icon click */ },
-                        modifier = Modifier.fillMaxWidth().padding(10.dp)
+                    OutlinedTextField(
+                        value = gratitudeText,
+                        onValueChange = { gratitudeText = it },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp),
+                        label = { Text("Enter gratitude") },
+                        trailingIcon = {
+                            IconButton(onClick = { gratitudeText = "" }) {
+                                Icon(Icons.Filled.Clear, contentDescription = "Clear")
+                            }
+                        }
                     )
+
                     Spacer(modifier = Modifier.height(8.dp))
+
                     Button(
                         onClick = {
                             if (gratitudeText.isNotBlank()) {
@@ -122,7 +120,9 @@ class MainActivity : ComponentActivity() {
                     ) {
                         Text("Save")
                     }
+
                     Spacer(modifier = Modifier.height(16.dp))
+
                     GratitudeList(gratitudeList, viewModel)
                 }
             }
@@ -133,13 +133,13 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun GratitudeList(gratitudeList: List<GratitudeItem>, viewModel: MainViewModel) {
         LazyColumn {
-            itemsIndexed(gratitudeList) { index, item ->
-                androidx.compose.material3.ListItem(
+            itemsIndexed(gratitudeList) { _, item ->
+                ListItem(
                     modifier = Modifier.fillMaxWidth(), // Modifier는 올바르게 전달
                     headlineContent = { Text(item.gratitudeText) }, // 'text' 대신 'headline' 사용
                     trailingContent = {
-                        IconButton(onClick = { showEditDialog(item, viewModel) }) {
-                            Icon(Icons.Default.Edit, contentDescription = "Edit")
+                        IconButton(onClick = { showEditDialog(item) }) {
+                            Icon(Icons.Filled.Edit, contentDescription = "Edit")
                         }
                     }
                 )
@@ -147,7 +147,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun showEditDialog(item: GratitudeItem, viewModel: MainViewModel) {
+    private fun showEditDialog(item: GratitudeItem) {
         val editText = EditText(this).apply {
             setText(item.gratitudeText)
         }
@@ -170,7 +170,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun hideKeyboard() {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         val currentFocusView = currentFocus
         if (currentFocusView != null) {
             imm.hideSoftInputFromWindow(currentFocusView.windowToken, 0)

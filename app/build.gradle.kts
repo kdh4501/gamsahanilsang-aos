@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.androidx.runtime.android)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.androidx.material3.android)
+    implementation("androidx.compose.material:material-icons-extended:1.7.8")
     implementation("androidx.compose.material3:material3-window-size-class:1.3.1")
     implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.4.0-alpha11")
     implementation(libs.androidx.ui.tooling.preview.android)

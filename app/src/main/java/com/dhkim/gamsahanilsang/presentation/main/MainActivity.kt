@@ -2,9 +2,7 @@ package com.dhkim.gamsahanilsang.presentation.main
 
 import android.os.Build
 import android.os.Bundle
-import android.view.animation.AlphaAnimation
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.EditText
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -40,13 +38,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.recyclerview.widget.RecyclerView
 import com.dhkim.gamsahanilsang.R
 import com.dhkim.gamsahanilsang.data.database.AppDatabase
 import com.dhkim.gamsahanilsang.data.repository.RoomGratitudeRepository
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.usecase.SaveGratitudeUseCase
-import com.dhkim.gamsahanilsang.presentation.adapter.GratitudeAdapter
 import com.dhkim.gamsahanilsang.presentation.viewmodel.MainViewModel
 import com.dhkim.gamsahanilsang.presentation.viewmodel.MainViewModelFactory
 
@@ -54,10 +50,6 @@ class MainActivity : ComponentActivity() {
     private val gratitudeDao by lazy { AppDatabase.getDatabase(this).gratitudeDao() }
     private val viewModel: MainViewModel by viewModels { MainViewModelFactory(saveGratitudeUseCase) }
 
-    private lateinit var editTextGratitude: EditText
-    private lateinit var buttonSave: Button
-    private lateinit var recyclerViewGratitude: RecyclerView
-    private lateinit var adapter: GratitudeAdapter
     private lateinit var saveGratitudeUseCase: SaveGratitudeUseCase
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
@@ -161,12 +153,6 @@ class MainActivity : ComponentActivity() {
             }
             .setNegativeButton(getString(R.string.cancel), null)
             .show()
-    }
-
-    private fun showSaveAnimation() {
-        val animation = AlphaAnimation(0.2f, 1.0f)
-        animation.duration = 500
-        buttonSave.startAnimation(animation)
     }
 
     private fun hideKeyboard() {

@@ -74,7 +74,7 @@ class MainActivity : ComponentActivity() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Gratitude List") }
+                    title = { Text(getString(R.string.title_main))}
                 )
             },
             content = { paddingValues ->
@@ -90,7 +90,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(10.dp),
-                        label = { Text("Enter gratitude") },
+                        label = { Text(getString(R.string.input_hint)) },
                         trailingIcon = {
                             IconButton(onClick = { gratitudeText = "" }) {
                                 Icon(Icons.Filled.Clear, contentDescription = "Clear")
@@ -110,7 +110,7 @@ class MainActivity : ComponentActivity() {
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("Save")
+                        Text(getString(R.string.save_button))
                     }
 
                     Spacer(modifier = Modifier.height(16.dp))

@@ -128,10 +128,21 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     @Composable
     fun GratitudeList(gratitudeList: List<GratitudeItem>, viewModel: MainViewModel) {
+        val groupedItems by viewModel.groupedGratitudes.observeAsState(emptyMap())
+
         LazyColumn {
+            groupedItems.forEach { (date, items) ->
+                item {
+                    Text(
+                        text = date,
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                    )
+                }
+
+            }
             itemsIndexed(gratitudeList) { _, item ->
                 ListItem(
                     modifier = Modifier.fillMaxWidth(), // Modifier는 올바르게 전달

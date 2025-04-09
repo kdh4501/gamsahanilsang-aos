@@ -11,6 +11,9 @@ import kotlinx.coroutines.launch
 class MainViewModel(private  val saveGratitudeUseCase: SaveGratitudeUseCase) : ViewModel() {
     private val _gratitudeList = MutableLiveData<List<GratitudeItem>>(emptyList())
     val gratitudeList: LiveData<List<GratitudeItem>> = _gratitudeList
+    private val _groupedGratitudes = MutableLiveData<Map<String, List<GratitudeItem>>>()
+    val groupedGratitudes: LiveData<Map<String, List<GratitudeItem>>> = _groupedGratitudes
+
 
     fun saveGratitude(text: String) {
         val item = GratitudeItem(gratitudeText = text)
@@ -32,6 +35,9 @@ class MainViewModel(private  val saveGratitudeUseCase: SaveGratitudeUseCase) : V
         viewModelScope.launch {
             val gratitudeList = saveGratitudeUseCase.getAllGratitudes() // 모든 감사한 일 로드
             _gratitudeList.value = gratitudeList
+
+            val grouped = gratitudeList.groupBy { it.date }
+            _groupedGratitudes.value = grouped
         }
     }
 

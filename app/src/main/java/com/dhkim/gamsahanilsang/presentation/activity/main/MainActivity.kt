@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresExtension
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,11 +42,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.dhkim.gamsahanilsang.R
 import com.dhkim.gamsahanilsang.data.database.AppDatabase
 import com.dhkim.gamsahanilsang.data.repository.RoomGratitudeRepository
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.usecase.SaveGratitudeUseCase
+import com.dhkim.gamsahanilsang.presentation.activity.detil.DetailScreen
 import com.dhkim.gamsahanilsang.presentation.ui.theme.MyTheme
 
 class MainActivity : ComponentActivity() {
@@ -61,7 +67,14 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MyTheme {
-                GratitudeApp(viewModel)
+                val navController = rememberNavController() // NavController 생성
+                NavHost(navController = navController, startDestination = "gratitudeList") {
+                    composable("gratitudeList") { GratitudeApp(viewModel, navController) }
+                    composable("detail/{itemId}") { backStackEntry ->
+                        val itemId = backStackEntry.arguments?.getString("itemId")
+                        DetailScreen(itemId)
+                    }
+                }
             }
         }
 
@@ -71,7 +84,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     @Composable
-    fun GratitudeApp(viewModel: MainViewModel) {
+    fun GratitudeApp(viewModel: MainViewModel, navController: NavController) {
         var gratitudeText by remember { mutableStateOf("") }
         val gratitudeList by viewModel.gratitudeList.observeAsState(emptyList())
 
@@ -120,14 +133,14 @@ class MainActivity : ComponentActivity() {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    GratitudeList(gratitudeList, viewModel)
+                    GratitudeList(gratitudeList, viewModel, navController)
                 }
             }
         )
     }
 
     @Composable
-    fun GratitudeList(gratitudeList: List<GratitudeItem>, viewModel: MainViewModel) {
+    fun GratitudeList(gratitudeList: List<GratitudeItem>, viewModel: MainViewModel, navController: NavController) {
         val groupedItems by viewModel.groupedGratitudes.observeAsState(emptyMap())
 
         LazyColumn {
@@ -143,7 +156,9 @@ class MainActivity : ComponentActivity() {
             }
             itemsIndexed(gratitudeList) { _, item ->
                 ListItem(
-                    modifier = Modifier.fillMaxWidth(), // Modifier는 올바르게 전달
+                    modifier = Modifier.fillMaxWidth().clickable {
+                        navController.navigate("detail/${item.id}")
+                    },
                     headlineContent = { Text(item.gratitudeText) }, // 'text' 대신 'headline' 사용
                     trailingContent = {
                         IconButton(onClick = { showEditDialog(item) }) {
@@ -183,6 +198,11 @@ class MainActivity : ComponentActivity() {
     @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
     @Composable
     fun PreviewGratitudeApp() {
-        GratitudeApp(viewModel)
+        val navController = rememberNavController()
+        // 미리보기용 기본 데이터를 설정
+        val sampleViewModel = MainViewModel(
+            saveGratitudeUseCase = TODO()
+        ) // Sample ViewModel 생성 또는 Mock 데이터 사용
+        GratitudeApp(sampleViewModel, navController) // 미리보기용으로 전달
     }
 }

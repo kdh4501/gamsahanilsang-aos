@@ -1,4 +1,4 @@
-package com.dhkim.gamsahanilsang.presentation.viewmodel
+package com.dhkim.gamsahanilsang.presentation.activity.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

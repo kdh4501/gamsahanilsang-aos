@@ -1,4 +1,4 @@
-package com.dhkim.gamsahanilsang.presentation.activity.main
+package com.dhkim.gamsahanilsang.presentation.main
 
 import android.content.res.Configuration
 import android.os.Build
@@ -51,8 +51,10 @@ import com.dhkim.gamsahanilsang.data.database.AppDatabase
 import com.dhkim.gamsahanilsang.data.repository.RoomGratitudeRepository
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.usecase.SaveGratitudeUseCase
-import com.dhkim.gamsahanilsang.presentation.activity.detil.DetailScreen
+import com.dhkim.gamsahanilsang.presentation.screen.detil.DetailScreen
 import com.dhkim.gamsahanilsang.presentation.ui.theme.MyTheme
+import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModel
+import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModelFactory
 
 class MainActivity : ComponentActivity() {
     private val gratitudeDao by lazy { AppDatabase.getDatabase(this).gratitudeDao() }

@@ -1,4 +1,4 @@
-package com.dhkim.gamsahanilsang.presentation.activity.detil
+package com.dhkim.gamsahanilsang.presentation.screen.detil
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

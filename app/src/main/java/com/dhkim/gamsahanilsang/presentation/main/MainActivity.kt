@@ -51,7 +51,7 @@ import com.dhkim.gamsahanilsang.data.database.AppDatabase
 import com.dhkim.gamsahanilsang.data.repository.RoomGratitudeRepository
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.usecase.SaveGratitudeUseCase
-import com.dhkim.gamsahanilsang.presentation.screen.detil.DetailScreen
+import com.dhkim.gamsahanilsang.presentation.screen.detil.DetailDialog
 import com.dhkim.gamsahanilsang.presentation.ui.theme.MyTheme
 import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModel
 import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModelFactory
@@ -74,7 +74,6 @@ class MainActivity : ComponentActivity() {
                     composable("gratitudeList") { GratitudeApp(viewModel, navController) }
                     composable("detail/{itemId}") { backStackEntry ->
                         val itemId = backStackEntry.arguments?.getString("itemId")
-                        DetailScreen(itemId)
                     }
                 }
             }
@@ -89,6 +88,9 @@ class MainActivity : ComponentActivity() {
     fun GratitudeApp(viewModel: MainViewModel, navController: NavController) {
         var gratitudeText by remember { mutableStateOf("") }
         val gratitudeList by viewModel.gratitudeList.observeAsState(emptyList())
+
+        var showDialog by remember { mutableStateOf(false) }
+        var selectedItem by remember { mutableStateOf<GratitudeItem?>(null) }
 
         Scaffold(
             topBar = {
@@ -135,14 +137,30 @@ class MainActivity : ComponentActivity() {
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    GratitudeList(gratitudeList, viewModel, navController)
+                    GratitudeList(gratitudeList, viewModel, navController, {item ->
+                        selectedItem = item
+                        showDialog = true
+                    })
+
+                    if (showDialog && selectedItem != null) {
+                        DetailDialog(
+                            showDialog = showDialog,
+                            onDismiss = { showDialog = false; selectedItem = null },
+                            item = selectedItem!!
+                        )
+                    }
                 }
             }
         )
     }
 
     @Composable
-    fun GratitudeList(gratitudeList: List<GratitudeItem>, viewModel: MainViewModel, navController: NavController) {
+    fun GratitudeList(
+        gratitudeList: List<GratitudeItem>,
+        viewModel: MainViewModel,
+        navController: NavController,
+        onItemClick: (GratitudeItem) -> Unit
+    ) {
         val groupedItems by viewModel.groupedGratitudes.observeAsState(emptyMap())
 
         LazyColumn {
@@ -159,7 +177,7 @@ class MainActivity : ComponentActivity() {
             itemsIndexed(gratitudeList) { _, item ->
                 ListItem(
                     modifier = Modifier.fillMaxWidth().clickable {
-                        navController.navigate("detail/${item.id}")
+                        onItemClick(item)
                     },
                     headlineContent = { Text(item.gratitudeText) }, // 'text' 대신 'headline' 사용
                     trailingContent = {

@@ -1,6 +1,5 @@
 package com.dhkim.gamsahanilsang.presentation.main
 
-import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.inputmethod.InputMethodManager
@@ -40,7 +39,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
@@ -72,9 +70,6 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController() // NavController 생성
                 NavHost(navController = navController, startDestination = "gratitudeList") {
                     composable("gratitudeList") { GratitudeApp(viewModel, navController) }
-                    composable("detail/{itemId}") { backStackEntry ->
-                        val itemId = backStackEntry.arguments?.getString("itemId")
-                    }
                 }
             }
         }
@@ -83,7 +78,6 @@ class MainActivity : ComponentActivity() {
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     @Composable
     fun GratitudeApp(viewModel: MainViewModel, navController: NavController) {
         var gratitudeText by remember { mutableStateOf("") }
@@ -212,17 +206,5 @@ class MainActivity : ComponentActivity() {
         if (currentFocusView != null) {
             imm.hideSoftInputFromWindow(currentFocusView.windowToken, 0)
         }
-    }
-
-    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
-    @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-    @Composable
-    fun PreviewGratitudeApp() {
-        val navController = rememberNavController()
-        // 미리보기용 기본 데이터를 설정
-        val sampleViewModel = MainViewModel(
-            saveGratitudeUseCase = TODO()
-        ) // Sample ViewModel 생성 또는 Mock 데이터 사용
-        GratitudeApp(sampleViewModel, navController) // 미리보기용으로 전달
     }
 }

@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Edit
@@ -158,7 +158,7 @@ class MainActivity : ComponentActivity() {
         val groupedItems by viewModel.groupedGratitudes.observeAsState(emptyMap())
 
         LazyColumn {
-            groupedItems.forEach { (date, items) ->
+            groupedItems.forEach { (date, gratitudeItems) ->
                 item {
                     Text(
                         text = date,
@@ -167,19 +167,20 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-            }
-            itemsIndexed(gratitudeList) { _, item ->
-                ListItem(
-                    modifier = Modifier.fillMaxWidth().clickable {
-                        onItemClick(item)
-                    },
-                    headlineContent = { Text(item.gratitudeText) }, // 'text' 대신 'headline' 사용
-                    trailingContent = {
-                        IconButton(onClick = { showEditDialog(item) }) {
-                            Icon(Icons.Filled.Edit, contentDescription = "Edit")
+                items(gratitudeItems) { item ->
+                    ListItem(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onItemClick(item) },
+                        headlineContent = { Text(item.gratitudeText) },
+                        trailingContent = {
+                            IconButton(onClick = { showEditDialog(item) }) {
+                                Icon(Icons.Filled.Edit, contentDescription = "Edit")
+                            }
                         }
-                    }
-                )
+                    )
+                }
+
             }
         }
     }

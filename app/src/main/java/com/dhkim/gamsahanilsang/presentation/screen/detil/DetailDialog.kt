@@ -23,8 +23,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.dhkim.gamsahanilsang.R
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModel
 
@@ -84,7 +86,7 @@ fun DetailDialog(
                                 },
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Text(text = "수정")
+                                Text(text = stringResource(id = R.string.edit_button))
                             }
 
                             Spacer(modifier = Modifier.width(8.dp))
@@ -96,7 +98,7 @@ fun DetailDialog(
                                 },
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Text(text = "삭제")
+                                Text(text = stringResource(id = R.string.delete_button))
                             }
                         }
 

@@ -1,6 +1,7 @@
 package com.dhkim.gamsahanilsang.data.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -16,6 +17,9 @@ interface GratitudeDao {
 
     @Update
     suspend fun update(item: GratitudeItem)
+
+    @Delete
+    suspend fun delete(item: GratitudeItem)
 
     @Query("DELETE FROM gratitude_items")
     suspend fun deleteAll()

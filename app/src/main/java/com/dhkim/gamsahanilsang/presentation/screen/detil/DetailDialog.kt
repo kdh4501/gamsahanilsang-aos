@@ -21,9 +21,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
+import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModel
 
 @Composable
-fun DetailDialog(showDialog: Boolean, onDismiss: () -> Unit, item: GratitudeItem) {
+fun DetailDialog(
+    showDialog: Boolean,
+    onDismiss: () -> Unit,
+    item: GratitudeItem,
+    viewModel: MainViewModel
+) {
     if (showDialog) {
         Dialog(onDismissRequest = onDismiss) {
             Box(
@@ -65,7 +71,7 @@ fun DetailDialog(showDialog: Boolean, onDismiss: () -> Unit, item: GratitudeItem
                         ) {
                             Button(
                                 onClick = {
-
+                                    
                                 },
                                 modifier = Modifier.weight(1f)
                             ) {
@@ -76,6 +82,7 @@ fun DetailDialog(showDialog: Boolean, onDismiss: () -> Unit, item: GratitudeItem
 
                             Button(
                                 onClick = {
+                                    viewModel.deleteGratitude(item)
                                     onDismiss()
                                 },
                                 modifier = Modifier.weight(1f)

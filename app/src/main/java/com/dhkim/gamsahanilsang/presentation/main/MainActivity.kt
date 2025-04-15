@@ -48,7 +48,7 @@ import com.dhkim.gamsahanilsang.R
 import com.dhkim.gamsahanilsang.data.database.AppDatabase
 import com.dhkim.gamsahanilsang.data.repository.RoomGratitudeRepository
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
-import com.dhkim.gamsahanilsang.domain.usecase.SaveGratitudeUseCase
+import com.dhkim.gamsahanilsang.domain.usecase.GratitudeUseCase
 import com.dhkim.gamsahanilsang.presentation.screen.detil.DetailDialog
 import com.dhkim.gamsahanilsang.presentation.ui.theme.MyTheme
 import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModel
@@ -56,14 +56,14 @@ import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModelFactory
 
 class MainActivity : ComponentActivity() {
     private val gratitudeDao by lazy { AppDatabase.getDatabase(this).gratitudeDao() }
-    private val viewModel: MainViewModel by viewModels { MainViewModelFactory(saveGratitudeUseCase) }
+    private val viewModel: MainViewModel by viewModels { MainViewModelFactory(gratitudeUseCase) }
 
-    private lateinit var saveGratitudeUseCase: SaveGratitudeUseCase
+    private lateinit var gratitudeUseCase: GratitudeUseCase
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        saveGratitudeUseCase = SaveGratitudeUseCase(RoomGratitudeRepository(gratitudeDao))
+        gratitudeUseCase = GratitudeUseCase(RoomGratitudeRepository(gratitudeDao))
 
         setContent {
             MyTheme {
@@ -140,7 +140,8 @@ class MainActivity : ComponentActivity() {
                         DetailDialog(
                             showDialog = showDialog,
                             onDismiss = { showDialog = false; selectedItem = null },
-                            item = selectedItem!!
+                            item = selectedItem!!,
+                            viewModel = viewModel
                         )
                     }
                 }

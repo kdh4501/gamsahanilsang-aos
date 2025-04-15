@@ -6,10 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
-import com.dhkim.gamsahanilsang.domain.usecase.SaveGratitudeUseCase
+import com.dhkim.gamsahanilsang.domain.usecase.GratitudeUseCase
 import kotlinx.coroutines.launch
 
-class MainViewModel(private  val saveGratitudeUseCase: SaveGratitudeUseCase) : ViewModel() {
+class MainViewModel(private  val gratitudeUseCase: GratitudeUseCase) : ViewModel() {
     private val _gratitudeList = MutableLiveData<List<GratitudeItem>>(emptyList())
     val gratitudeList: LiveData<List<GratitudeItem>> = _gratitudeList
     private val _groupedGratitudes = MutableLiveData<Map<String, List<GratitudeItem>>>()
@@ -21,7 +21,7 @@ class MainViewModel(private  val saveGratitudeUseCase: SaveGratitudeUseCase) : V
     fun saveGratitude(text: String) {
         val item = GratitudeItem(gratitudeText = text)
         viewModelScope.launch {
-            saveGratitudeUseCase.execute(item)
+            gratitudeUseCase.execute(item)
             _gratitudeList.value = _gratitudeList.value?.plus(item) ?: listOf(item)
         }
         loadGratitudes()
@@ -29,21 +29,28 @@ class MainViewModel(private  val saveGratitudeUseCase: SaveGratitudeUseCase) : V
 
     fun updateGratitude(item: GratitudeItem) {
         viewModelScope.launch {
-            saveGratitudeUseCase.update(item)
+            gratitudeUseCase.update(item)
+            loadGratitudes()
+        }
+    }
+
+    fun deleteGratitude(item: GratitudeItem) {
+        viewModelScope.launch {
+            gratitudeUseCase.delete(item)
             loadGratitudes()
         }
     }
 
     fun loadGratitudes() {
         viewModelScope.launch {
-            val gratitudeList = saveGratitudeUseCase.getAllGratitudes() // 모든 감사한 일 로드
+            val gratitudeList = gratitudeUseCase.getAllGratitudes() // 모든 감사한 일 로드
             _gratitudeList.value = gratitudeList
         }
     }
 
     fun deleteAllGratitudes() {
         viewModelScope.launch {
-            saveGratitudeUseCase.deleteAllGratitude()
+            gratitudeUseCase.deleteAllGratitude()
             loadGratitudes()
         }
     }

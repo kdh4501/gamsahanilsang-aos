@@ -6,24 +6,28 @@ import com.dhkim.gamsahanilsang.domain.repository.GratitudeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class RoomGratitudeRepository(private val dao: GratitudeDao) : GratitudeRepository {
+class RoomGratitudeRepository(private val gratitudeDao: GratitudeDao) : GratitudeRepository {
     override suspend fun saveGratitude(item: GratitudeItem) {
         withContext(Dispatchers.IO) {
-            dao.insert(item)
+            gratitudeDao.insert(item)
         }
     }
 
     override suspend fun getAllGratitudes(): List<GratitudeItem> {
         return withContext(Dispatchers.IO) {
-            dao.getAll()
+            gratitudeDao.getAll()
         }
     }
 
     override suspend fun update(item: GratitudeItem) {
-        dao.update(item)
+        gratitudeDao.update(item)
+    }
+
+    override suspend fun delete(item: GratitudeItem) {
+        gratitudeDao.delete(item)
     }
 
     override suspend fun deleteAllGratitude() {
-        dao.deleteAll()
+        gratitudeDao.deleteAll()
     }
 }

@@ -2,6 +2,7 @@ package com.dhkim.gamsahanilsang.presentation.main
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.ComponentActivity
@@ -50,6 +51,9 @@ import com.dhkim.gamsahanilsang.data.repository.RoomGratitudeRepository
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.usecase.GratitudeUseCase
 import com.dhkim.gamsahanilsang.presentation.screen.detil.DetailDialog
+import com.dhkim.gamsahanilsang.presentation.screen.settings.SettingsScreen
+import com.dhkim.gamsahanilsang.presentation.screen.stats.StatsScreen
+import com.dhkim.gamsahanilsang.presentation.ui.components.BottomNavigationBar
 import com.dhkim.gamsahanilsang.presentation.ui.theme.MyTheme
 import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModel
 import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModelFactory
@@ -68,8 +72,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyTheme {
                 val navController = rememberNavController() // NavController 생성
+
+                // NavHost 경로 설정
                 NavHost(navController = navController, startDestination = "gratitudeList") {
+                    // NavigationItem Route 설정
                     composable("gratitudeList") { GratitudeApp(viewModel, navController) }
+                    composable("stats") { StatsScreen() }
+                    composable("settings") { SettingsScreen() }
                 }
             }
         }
@@ -90,6 +99,16 @@ class MainActivity : ComponentActivity() {
             topBar = {
                 TopAppBar(
                     title = { Text(getString(R.string.title_main))}
+                )
+            },
+            bottomBar = {
+                BottomNavigationBar(
+                    currentScreen = navController.currentDestination?.route ?: "gratitudeList",
+                    onNavigateToHome = { navController.navigate("gratitudeList") },
+                    onNavigateToStats = {
+                        Log.d("Navigation", "Navigating to Stats Screen")
+                        navController.navigate("stats") },
+                    onNavigateToSettings = { navController.navigate("settings") }
                 )
             },
             content = { paddingValues ->

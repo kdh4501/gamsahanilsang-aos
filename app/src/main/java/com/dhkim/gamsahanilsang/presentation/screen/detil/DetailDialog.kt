@@ -15,7 +15,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -30,6 +35,8 @@ fun DetailDialog(
     item: GratitudeItem,
     viewModel: MainViewModel
 ) {
+    var updateText by remember { mutableStateOf(item.gratitudeText) }
+
     if (showDialog) {
         Dialog(onDismissRequest = onDismiss) {
             Box(
@@ -57,10 +64,11 @@ fun DetailDialog(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text(
-                            text = item.gratitudeText,
-                            style = MaterialTheme.typography.headlineMedium,
-                            modifier = Modifier.weight(1f)  // 내용이 많아질 경우 공간을 차지하게 하기 위해서
+                        TextField(
+                            value = updateText,
+                            onValueChange = { updateText = it },
+                            label = { Text(item.gratitudeText) },
+                            modifier = Modifier.fillMaxWidth()
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -71,7 +79,8 @@ fun DetailDialog(
                         ) {
                             Button(
                                 onClick = {
-                                    
+                                    viewModel.updateGratitude(item.copy(gratitudeText = updateText))
+                                    onDismiss()
                                 },
                                 modifier = Modifier.weight(1f)
                             ) {

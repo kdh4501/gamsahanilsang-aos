@@ -91,7 +91,7 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = "gratitudeList") {
                         // NavigationItem Route 설정
                         composable("gratitudeList") { GratitudeApp(viewModel, paddingValues) }
-                        composable("stats") { StatsScreen() }
+                        composable("stats") { StatsScreen(viewModel) }
                         composable("settings") { SettingsScreen() }
                     }
                 }

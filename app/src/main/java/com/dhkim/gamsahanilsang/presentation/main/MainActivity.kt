@@ -2,7 +2,6 @@ package com.dhkim.gamsahanilsang.presentation.main
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.ComponentActivity
@@ -13,6 +12,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,7 +33,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -41,7 +41,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -64,6 +63,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var gratitudeUseCase: GratitudeUseCase
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,12 +73,27 @@ class MainActivity : ComponentActivity() {
             MyTheme {
                 val navController = rememberNavController() // NavController 생성
 
-                // NavHost 경로 설정
-                NavHost(navController = navController, startDestination = "gratitudeList") {
-                    // NavigationItem Route 설정
-                    composable("gratitudeList") { GratitudeApp(viewModel, navController) }
-                    composable("stats") { StatsScreen() }
-                    composable("settings") { SettingsScreen() }
+                Scaffold(
+                    topBar = {
+                        CenterAlignedTopAppBar(
+                            title = { Text(getString(R.string.title_main)) }
+                        )
+                    },
+                    bottomBar = {
+                        BottomNavigationBar(
+                            currentScreen = navController.currentDestination?.route ?: "gratitudeList", onNavigateToHome = { navController.navigate("gratitudeList") },
+                            onNavigateToStats = { navController.navigate("stats") },
+                            onNavigateToSettings = { navController.navigate("settings") }
+                        )
+                    }
+                ) { paddingValues ->
+                    // NavHost 경로 설정
+                    NavHost(navController = navController, startDestination = "gratitudeList") {
+                        // NavigationItem Route 설정
+                        composable("gratitudeList") { GratitudeApp(viewModel, paddingValues) }
+                        composable("stats") { StatsScreen() }
+                        composable("settings") { SettingsScreen() }
+                    }
                 }
             }
         }
@@ -88,91 +103,71 @@ class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun GratitudeApp(viewModel: MainViewModel, navController: NavController) {
+    fun GratitudeApp(
+        viewModel: MainViewModel,
+        paddingValues: PaddingValues
+    ) {
         var gratitudeText by remember { mutableStateOf("") }
-        val gratitudeList by viewModel.gratitudeList.observeAsState(emptyList())
 
         var showDialog by remember { mutableStateOf(false) }
         var selectedItem by remember { mutableStateOf<GratitudeItem?>(null) }
 
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text(getString(R.string.title_main))}
-                )
-            },
-            bottomBar = {
-                BottomNavigationBar(
-                    currentScreen = navController.currentDestination?.route ?: "gratitudeList",
-                    onNavigateToHome = { navController.navigate("gratitudeList") },
-                    onNavigateToStats = {
-                        Log.d("Navigation", "Navigating to Stats Screen")
-                        navController.navigate("stats") },
-                    onNavigateToSettings = { navController.navigate("settings") }
-                )
-            },
-            content = { paddingValues ->
-                Column(
-                    modifier = Modifier
-                        .padding(paddingValues)
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background)
-                        .padding(16.dp)
-                ) {
-                    OutlinedTextField(
-                        value = gratitudeText,
-                        onValueChange = { gratitudeText = it },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp),
-                        label = { Text(getString(R.string.input_hint)) },
-                        trailingIcon = {
-                            IconButton(onClick = { gratitudeText = "" }) {
-                                Icon(Icons.Filled.Clear, contentDescription = "Clear")
-                            }
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Button(
-                        onClick = {
-                            if (gratitudeText.isNotBlank()) {
-                                viewModel.saveGratitude(gratitudeText)
-                                gratitudeText = ""
-                                hideKeyboard()
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(getString(R.string.save_button))
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    GratitudeList(gratitudeList, viewModel, navController, {item ->
-                        selectedItem = item
-                        showDialog = true
-                    })
-
-                    if (showDialog && selectedItem != null) {
-                        DetailDialog(
-                            showDialog = showDialog,
-                            onDismiss = { showDialog = false; selectedItem = null },
-                            item = selectedItem!!,
-                            viewModel = viewModel
-                        )
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(16.dp)
+        ) {
+            OutlinedTextField(
+                value = gratitudeText,
+                onValueChange = { gratitudeText = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                label = { Text(getString(R.string.input_hint)) },
+                trailingIcon = {
+                    IconButton(onClick = { gratitudeText = "" }) {
+                        Icon(Icons.Filled.Clear, contentDescription = "Clear")
                     }
                 }
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Button(
+                onClick = {
+                    if (gratitudeText.isNotBlank()) {
+                        viewModel.saveGratitude(gratitudeText)
+                        gratitudeText = ""
+                        hideKeyboard()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(getString(R.string.save_button))
             }
-        )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            GratitudeList( {item ->
+                selectedItem = item
+                showDialog = true
+            })
+
+            if (showDialog && selectedItem != null) {
+                DetailDialog(
+                    showDialog = showDialog,
+                    onDismiss = { showDialog = false; selectedItem = null },
+                    item = selectedItem!!,
+                    viewModel = viewModel
+                )
+            }
+        }
     }
 
     @Composable
     fun GratitudeList(
-        gratitudeList: List<GratitudeItem>,
-        viewModel: MainViewModel,
-        navController: NavController,
         onItemClick: (GratitudeItem) -> Unit
     ) {
         val groupedItems by viewModel.groupedGratitudes.observeAsState(emptyMap())

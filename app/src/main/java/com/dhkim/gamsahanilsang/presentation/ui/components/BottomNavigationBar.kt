@@ -1,6 +1,5 @@
 package com.dhkim.gamsahanilsang.presentation.ui.components
 
-import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
@@ -32,12 +31,15 @@ fun BottomNavigationBar(
                 selected = currentScreen == item.route,
                 onClick = {
                     when (item) {
-                        NavigationItem.Home -> onNavigateToHome
-                        NavigationItem.Stats -> {
-                            Log.d("Navigation", "Navigating to Stats Screen 111111 ")
-                            onNavigateToStats
+                        NavigationItem.Home -> {
+                            onNavigateToHome()
                         }
-                        NavigationItem.Settings -> onNavigateToSettings
+                        NavigationItem.Stats -> {
+                            onNavigateToStats()
+                        }
+                        NavigationItem.Settings -> {
+                            onNavigateToSettings()
+                        }
                     }
                 }
             )

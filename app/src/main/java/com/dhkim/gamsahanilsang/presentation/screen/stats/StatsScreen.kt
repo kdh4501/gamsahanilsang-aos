@@ -70,7 +70,7 @@ fun StatsScreen(mainViewModel: MainViewModel = viewModel()) {
                     thickness = 15.dp, // 두께 설정
                     spacing = 6.dp, // 간격 설정
                     cornerRadius = Bars.Data.Radius.None, // 모서리 반경 설정
-                    style = DrawStyle.Fill // 스타일 設定
+                    style = DrawStyle.Fill // 스타일
                 ),
                 modifier = Modifier
                     .fillMaxWidth()

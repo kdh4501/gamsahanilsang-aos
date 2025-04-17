@@ -11,4 +11,6 @@
     <string name="edit_button">Edit</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
+    <string name="description_search">Search</string>
+    <string name="description_contents_add">Contents Add</string>
 </resources>

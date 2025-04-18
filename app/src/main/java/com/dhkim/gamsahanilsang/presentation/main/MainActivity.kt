@@ -2,8 +2,8 @@ package com.dhkim.gamsahanilsang.presentation.main
 
 import android.os.Build
 import android.os.Bundle
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -42,6 +42,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
@@ -75,6 +76,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyTheme {
                 val navController = rememberNavController() // NavController 생성
+                var showInputArea by remember { mutableStateOf(false) }
 
                 Scaffold(
                     topBar = {
@@ -82,7 +84,7 @@ class MainActivity : ComponentActivity() {
                             title = { Text(getString(R.string.title_main)) },
                             navigationIcon = {
                                 IconButton(onClick = {
-
+                                    Toast.makeText(applicationContext, "미구현", Toast.LENGTH_SHORT).show()
                                 }) {
                                     Icon(
                                         imageVector = Icons.Default.Search,
@@ -92,7 +94,7 @@ class MainActivity : ComponentActivity() {
                             },
                             actions = {
                                 IconButton(onClick = {
-
+                                    showInputArea = true
                                 }) {
                                     Icon(
                                         imageVector = Icons.Default.Add,
@@ -104,7 +106,8 @@ class MainActivity : ComponentActivity() {
                     },
                     bottomBar = {
                         BottomNavigationBar(
-                            currentScreen = navController.currentDestination?.route ?: "gratitudeList", onNavigateToHome = { navController.navigate("gratitudeList") },
+                            currentScreen = navController.currentDestination?.route ?: "gratitudeList",
+                            onNavigateToHome = { navController.navigate("gratitudeList") },
                             onNavigateToStats = { navController.navigate("stats") },
                             onNavigateToSettings = { navController.navigate("settings") }
                         )
@@ -113,7 +116,14 @@ class MainActivity : ComponentActivity() {
                     // NavHost 경로 설정
                     NavHost(navController = navController, startDestination = "gratitudeList") {
                         // NavigationItem Route 설정
-                        composable("gratitudeList") { GratitudeApp(viewModel, paddingValues) }
+                        composable("gratitudeList") {
+                            GratitudeApp(
+                                viewModel = viewModel,
+                                paddingValues = paddingValues,
+                                showInputArea = showInputArea,
+                                onInputAreaHidden = { showInputArea = false }
+                            )
+                        }
                         composable("stats") { StatsScreen(viewModel) }
                         composable("settings") { SettingsScreen() }
                     }
@@ -128,12 +138,19 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun GratitudeApp(
         viewModel: MainViewModel,
-        paddingValues: PaddingValues
+        paddingValues: PaddingValues,
+        showInputArea: Boolean = false,
+        onInputAreaHidden: (() -> Unit)? = null
     ) {
         var gratitudeText by remember { mutableStateOf("") }
-
         var showDialog by remember { mutableStateOf(false) }
         var selectedItem by remember { mutableStateOf<GratitudeItem?>(null) }
+
+        val keyboardController = LocalSoftwareKeyboardController.current
+
+        fun hideKeyboard() {
+            keyboardController?.hide()
+        }
 
         Column(
             modifier = Modifier
@@ -142,33 +159,36 @@ class MainActivity : ComponentActivity() {
                 .background(MaterialTheme.colorScheme.background)
                 .padding(16.dp)
         ) {
-            OutlinedTextField(
-                value = gratitudeText,
-                onValueChange = { gratitudeText = it },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                label = { Text(getString(R.string.input_hint)) },
-                trailingIcon = {
-                    IconButton(onClick = { gratitudeText = "" }) {
-                        Icon(Icons.Filled.Clear, contentDescription = "Clear")
+            if (showInputArea) {
+                OutlinedTextField(
+                    value = gratitudeText,
+                    onValueChange = { gratitudeText = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    label = { Text(getString(R.string.input_hint)) },
+                    trailingIcon = {
+                        IconButton(onClick = { gratitudeText = "" }) {
+                            Icon(Icons.Filled.Clear, contentDescription = "Clear")
+                        }
                     }
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = {
+                        if (gratitudeText.isNotBlank()) {
+                            viewModel.saveGratitude(gratitudeText)
+                            gratitudeText = ""
+                            hideKeyboard()
+                            onInputAreaHidden?.invoke()
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(getString(R.string.save_button))
                 }
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Button(
-                onClick = {
-                    if (gratitudeText.isNotBlank()) {
-                        viewModel.saveGratitude(gratitudeText)
-                        gratitudeText = ""
-                        hideKeyboard()
-                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(getString(R.string.save_button))
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -237,13 +257,5 @@ class MainActivity : ComponentActivity() {
             }
             .setNegativeButton(getString(R.string.cancel), null)
             .show()
-    }
-
-    private fun hideKeyboard() {
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        val currentFocusView = currentFocus
-        if (currentFocusView != null) {
-            imm.hideSoftInputFromWindow(currentFocusView.windowToken, 0)
-        }
     }
 }

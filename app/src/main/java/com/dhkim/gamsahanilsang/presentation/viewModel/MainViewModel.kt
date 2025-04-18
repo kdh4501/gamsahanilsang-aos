@@ -1,30 +1,37 @@
 package com.dhkim.gamsahanilsang.presentation.viewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.usecase.GratitudeUseCase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class MainViewModel(private  val gratitudeUseCase: GratitudeUseCase) : ViewModel() {
-    private val _gratitudeList = MutableLiveData<List<GratitudeItem>>(emptyList())
-    val gratitudeList: LiveData<List<GratitudeItem>> = _gratitudeList
-    private val _groupedGratitudes = MutableLiveData<Map<String, List<GratitudeItem>>>()
-    val groupedGratitudes: LiveData<Map<String, List<GratitudeItem>>> = gratitudeList.map { list ->
+    private val _gratitudeList = MutableStateFlow<List<GratitudeItem>>(emptyList())
+    val gratitudeList: StateFlow<List<GratitudeItem>> = _gratitudeList.asStateFlow()
+
+    val groupedGratitudes: StateFlow<Map<String, List<GratitudeItem>>> = gratitudeList.map{ list ->
             list.groupBy { it.date }
         }
-
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyMap()
+        )
 
     fun saveGratitude(text: String) {
         val item = GratitudeItem(gratitudeText = text)
         viewModelScope.launch {
             gratitudeUseCase.execute(item)
-            _gratitudeList.value = _gratitudeList.value?.plus(item) ?: listOf(item)
+            _gratitudeList.value = _gratitudeList.value + item
+            loadGratitudes()
         }
-        loadGratitudes()
     }
 
     fun updateGratitude(item: GratitudeItem) {

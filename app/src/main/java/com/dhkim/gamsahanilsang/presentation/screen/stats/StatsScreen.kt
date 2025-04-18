@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,8 +32,7 @@ import ir.ehsannarmani.compose_charts.models.DrawStyle
 @Composable
 fun StatsScreen(mainViewModel: MainViewModel = viewModel()) {
     // groupedGratitudes LiveData를 Compose State로 변환
-    val groupedGratitudes by mainViewModel.groupedGratitudes.observeAsState(initial = emptyMap())
-
+    val groupedGratitudes by mainViewModel.groupedGratitudes.collectAsState()
     // ColumnChart 데이터 준비
     val chartData = remember(groupedGratitudes) {
         groupedGratitudes.map { (date, gratitudeItems) ->

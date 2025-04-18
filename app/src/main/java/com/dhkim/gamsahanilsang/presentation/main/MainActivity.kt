@@ -36,8 +36,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -213,7 +213,7 @@ class MainActivity : ComponentActivity() {
     fun GratitudeList(
         onItemClick: (GratitudeItem) -> Unit
     ) {
-        val groupedItems by viewModel.groupedGratitudes.observeAsState(emptyMap())
+        val groupedItems by viewModel.groupedGratitudes.collectAsState()
 
         LazyColumn {
             groupedItems.forEach { (date, gratitudeItems) ->

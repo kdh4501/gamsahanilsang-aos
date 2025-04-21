@@ -36,6 +36,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,6 +61,9 @@ import com.dhkim.gamsahanilsang.presentation.ui.components.BottomNavigationBar
 import com.dhkim.gamsahanilsang.presentation.ui.theme.MyTheme
 import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModel
 import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModelFactory
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     private val gratitudeDao by lazy { AppDatabase.getDatabase(this).gratitudeDao() }
@@ -145,11 +149,20 @@ class MainActivity : ComponentActivity() {
         var gratitudeText by remember { mutableStateOf("") }
         var showDialog by remember { mutableStateOf(false) }
         var selectedItem by remember { mutableStateOf<GratitudeItem?>(null) }
+        val streak by viewModel.streak.collectAsState()
 
         val keyboardController = LocalSoftwareKeyboardController.current
 
         fun hideKeyboard() {
             keyboardController?.hide()
+        }
+
+        val todayStr = remember {
+            SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        }
+
+        LaunchedEffect(key1 = todayStr) {
+            Toast.makeText(applicationContext, "오늘까지 $streak 일 연속 기록", Toast.LENGTH_SHORT).show()
         }
 
         Column(

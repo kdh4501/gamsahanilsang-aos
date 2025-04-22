@@ -20,6 +20,12 @@ class MainViewModel(private  val gratitudeUseCase: GratitudeUseCase) : ViewModel
     val gratitudeList: StateFlow<List<GratitudeItem>> = _gratitudeList.asStateFlow()
     private val _streak = MutableStateFlow(0)
     val streak: StateFlow<Int> = _streak.asStateFlow()
+    private val _isStreakToastShown = MutableStateFlow(false)
+    val isStreakToastShown = _isStreakToastShown.asStateFlow()
+
+    fun markStreakToastShown() {
+        _isStreakToastShown.value = true
+    }
 
     val groupedGratitudes: StateFlow<Map<String, List<GratitudeItem>>> = gratitudeList.map{ list ->
             list.groupBy { it.date }

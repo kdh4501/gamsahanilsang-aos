@@ -153,6 +153,8 @@ class MainActivity : ComponentActivity() {
 
         val keyboardController = LocalSoftwareKeyboardController.current
 
+        val isStreakToastShown by viewModel.isStreakToastShown.collectAsState()
+
         fun hideKeyboard() {
             keyboardController?.hide()
         }
@@ -162,7 +164,10 @@ class MainActivity : ComponentActivity() {
         }
 
         LaunchedEffect(key1 = todayStr) {
-            Toast.makeText(applicationContext, "오늘까지 $streak 일 연속 기록", Toast.LENGTH_SHORT).show()
+            if (!isStreakToastShown) {
+                Toast.makeText(applicationContext, "오늘까지 $streak 일 연속 기록", Toast.LENGTH_SHORT).show()
+                viewModel.markStreakToastShown()
+            }
         }
 
         Column(

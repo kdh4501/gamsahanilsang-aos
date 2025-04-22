@@ -111,7 +111,12 @@ class MainActivity : ComponentActivity() {
                     bottomBar = {
                         BottomNavigationBar(
                             currentScreen = navController.currentDestination?.route ?: "gratitudeList",
-                            onNavigateToHome = { navController.navigate("gratitudeList") },
+                            onNavigateToHome = {
+                                // 홈화면 네비게이션 중복 이동 방지
+                                if (navController.currentDestination?.route != "gratitudeList") {
+                                    navController.navigate("gratitudeList")
+                                }
+                                               },
                             onNavigateToStats = { navController.navigate("stats") },
                             onNavigateToSettings = { navController.navigate("settings") }
                         )

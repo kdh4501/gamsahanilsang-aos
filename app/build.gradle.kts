@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kapt)
     alias(libs.plugins.googlDevToolsKSP)
     kotlin("plugin.serialization") version "2.0.21"
+    id("com.google.dagger.hilt.android") version "2.48.1" apply false
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
 }
 
 android {
@@ -77,7 +79,6 @@ dependencies {
     implementation("androidx.compose.animation:animation:1.8.0-rc02")
 
     val nav_version = "2.8.9"
-
     // Jetpack Compose integration
     implementation("androidx.navigation:navigation-compose:$nav_version")
 
@@ -95,6 +96,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
     implementation ("io.github.ehsannarmani:compose-charts:0.1.2")
+
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.56.1")
+    ksp("com.google.dagger:hilt-android-compiler:2.56.1")
 }
 java {
     toolchain {

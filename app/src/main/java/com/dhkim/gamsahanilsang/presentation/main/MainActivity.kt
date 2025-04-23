@@ -172,7 +172,8 @@ class MainActivity : ComponentActivity() {
 
         LaunchedEffect(key1 = todayStr) {
             if (!isStreakToastShown) {
-                Toast.makeText(applicationContext, "오늘까지 $streak 일 연속 기록", Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext,
+                    getString(R.string.streak_toast_message, streak), Toast.LENGTH_SHORT).show()
                 viewModel.markStreakToastShown()
             }
         }

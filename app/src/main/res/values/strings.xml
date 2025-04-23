@@ -12,5 +12,6 @@
     <string name="ok">확인</string>
     <string name="description_search">검색</string>
     <string name="description_contents_add">내용 추가</string>
+    <string name="streak_toast_message">오늘까지 %d일 연속 기록</string>
 
 </resources>

@@ -11,6 +11,7 @@ import androidx.annotation.RequiresExtension
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +44,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -139,8 +142,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-
-        viewModel.loadGratitudes()
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -154,11 +155,12 @@ class MainActivity : ComponentActivity() {
         var gratitudeText by remember { mutableStateOf("") }
         var showDialog by remember { mutableStateOf(false) }
         var selectedItem by remember { mutableStateOf<GratitudeItem?>(null) }
-        val streak by viewModel.streak.collectAsState()
+
+        val uiState by viewModel.uiState.collectAsState()
+        val streak = uiState.streak
+        val isStreakToastShown = uiState.isStreakToastShown
 
         val keyboardController = LocalSoftwareKeyboardController.current
-
-        val isStreakToastShown by viewModel.isStreakToastShown.collectAsState()
 
         fun hideKeyboard() {
             keyboardController?.hide()
@@ -172,6 +174,12 @@ class MainActivity : ComponentActivity() {
             if (!isStreakToastShown) {
                 Toast.makeText(applicationContext, "오늘까지 $streak 일 연속 기록", Toast.LENGTH_SHORT).show()
                 viewModel.markStreakToastShown()
+            }
+        }
+
+        uiState.error?.let { errorMessage ->
+            LaunchedEffect(errorMessage) {
+                Toast.makeText(applicationContext, errorMessage, Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -237,6 +245,17 @@ class MainActivity : ComponentActivity() {
         onItemClick: (GratitudeItem) -> Unit
     ) {
         val groupedItems by viewModel.groupedGratitudes.collectAsState()
+
+        val uiState by viewModel.uiState.collectAsState()
+
+        if (uiState.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+            }
+        }
 
         LazyColumn {
             groupedItems.forEach { (date, gratitudeItems) ->

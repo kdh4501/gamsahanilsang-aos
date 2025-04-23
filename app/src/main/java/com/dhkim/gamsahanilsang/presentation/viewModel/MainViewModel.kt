@@ -10,106 +10,154 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.abs
 
 class MainViewModel(private  val gratitudeUseCase: GratitudeUseCase) : ViewModel() {
-    private val _gratitudeList = MutableStateFlow<List<GratitudeItem>>(emptyList())
-    val gratitudeList: StateFlow<List<GratitudeItem>> = _gratitudeList.asStateFlow()
-    private val _streak = MutableStateFlow(0)
-    val streak: StateFlow<Int> = _streak.asStateFlow()
-    private val _isStreakToastShown = MutableStateFlow(false)
-    val isStreakToastShown = _isStreakToastShown.asStateFlow()
-
-    fun markStreakToastShown() {
-        _isStreakToastShown.value = true
+    companion object {
+        private const val DATE_FORMAT = "yyyy-MM-dd"
+        private const val FLOW_TIMEOUT_MS = 5000L
     }
 
-    val groupedGratitudes: StateFlow<Map<String, List<GratitudeItem>>> = gratitudeList.map{ list ->
-            list.groupBy { it.date }
-        }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyMap()
-        )
+    // UI State
+    private val _uiState = MutableStateFlow(MainUiState())
+    val uiState = _uiState.asStateFlow()
+
+    val groupedGratitudes: StateFlow<Map<String, List<GratitudeItem>>> = _uiState.map{
+        it.gratitudeList.groupBy { item -> item.date }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(FLOW_TIMEOUT_MS),
+        initialValue = emptyMap()
+    )
+
+    init {
+        loadGratitudes()
+    }
+
+    fun markStreakToastShown() {
+        _uiState.update { it.copy(isStreakToastShown = true) }
+    }
 
     fun saveGratitude(text: String) {
+        if (text.isBlank()) return
+
         val item = GratitudeItem(gratitudeText = text)
         viewModelScope.launch {
-            gratitudeUseCase.execute(item)
-            _gratitudeList.value = _gratitudeList.value + item
-            loadGratitudes()
+            try {
+                gratitudeUseCase.execute(item)
+                loadGratitudes()
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message) }
+            }
         }
     }
 
     fun updateGratitude(item: GratitudeItem) {
         viewModelScope.launch {
-            gratitudeUseCase.update(item)
-            loadGratitudes()
+            try {
+                gratitudeUseCase.update(item)
+                loadGratitudes()
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message) }
+            }
         }
     }
 
     fun deleteGratitude(item: GratitudeItem) {
         viewModelScope.launch {
-            gratitudeUseCase.delete(item)
-            loadGratitudes()
+            try {
+                gratitudeUseCase.delete(item)
+                loadGratitudes()
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message) }
+            }
+
         }
     }
 
     fun loadGratitudes() {
         viewModelScope.launch {
-            val gratitudeList = gratitudeUseCase.getAllGratitudes() // 모든 감사한 일 로드
-            _gratitudeList.value = gratitudeList
+            try {
+                val gratitudeList = gratitudeUseCase.getAllGratitudes() // 모든 감사한 일 로드
+                val currentStreak = calculateStreak(gratitudeList)
 
-            // 연속기록 계산 및 업데이트
-            val currentStreak = calculateStreak(gratitudeList)
-            _streak.value = currentStreak
+                _uiState.update {
+                    it.copy(
+                        gratitudeList = gratitudeList,
+                        streak = currentStreak,
+                        isLoading = false,
+                        error = null
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        isLoading = false,
+                        error = e.message
+                    )
+                }
+            }
         }
     }
 
     fun deleteAllGratitudes() {
         viewModelScope.launch {
-            gratitudeUseCase.deleteAllGratitude()
-            loadGratitudes()
+            try {
+                gratitudeUseCase.deleteAllGratitude()
+                loadGratitudes()
+            } catch (e: Exception) {
+                _uiState.update { it.copy(error = e.message) }
+            }
         }
     }
 
     private fun calculateStreak(gratitudes: List<GratitudeItem>): Int {
         if (gratitudes.isEmpty()) return 0
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val dateFormat = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
 
+        // 날짜별로 그룹화하고 정렬
         val dates = gratitudes.map { it.date }
             .distinct()
             .sortedDescending()
 
+        // 오늘 날짜와 비교
         val todayStr = dateFormat.format(Date())
-        if (dates[0] != todayStr) {
-            // 오늘 기록이 없으면 연속0일
-            return 0
+        if (dates.isEmpty() || dates[0] != todayStr) {
+            return 0    // 오늘 기록이 없으면 연속0일
         }
 
         var streak = 1
         var prevDate = dateFormat.parse(dates[0])!!
 
         for (i in 1 until dates.size) {
-            val currentDate = dateFormat.parse(dates[i])!!
-            val diff = (prevDate.time - currentDate.time) / (1000 * 60 * 24)
+            val nextDate = dateFormat.parse(dates[i])!!
 
-            if (diff == 1L) {
+            val diffInMillis = prevDate.time - nextDate.time
+            val diffInDays = abs(diffInMillis) / (1000 * 60 * 60 * 24)
+
+            if (diffInDays == 1L) {
                 streak++
-                prevDate = currentDate
-            } else if (diff > 1L) {
+                prevDate = nextDate
+            } else if (diffInDays > 1L) {
                 break   // 연속 실패
-            } else {
-                // 같은 날짜 중 시 무시
-                prevDate = currentDate
             }
         }
 
         return streak
     }
+
+    // UI 상태를 위한 데이터 클래스
+    data class MainUiState(
+        val gratitudeList: List<GratitudeItem> = emptyList(),
+        val streak: Int = 0,
+        val isStreakToastShown: Boolean = false,
+        val isLoading: Boolean = true,
+        val error: String? = null
+    )
 }

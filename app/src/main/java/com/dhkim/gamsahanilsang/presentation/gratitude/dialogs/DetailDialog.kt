@@ -1,4 +1,4 @@
-package com.dhkim.gamsahanilsang.presentation.screen.detil
+package com.dhkim.gamsahanilsang.presentation.gratitude.dialogs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

@@ -57,7 +57,7 @@ import com.dhkim.gamsahanilsang.data.database.AppDatabase
 import com.dhkim.gamsahanilsang.data.repository.RoomGratitudeRepository
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.usecase.GratitudeUseCase
-import com.dhkim.gamsahanilsang.presentation.screen.detil.DetailDialog
+import com.dhkim.gamsahanilsang.presentation.gratitude.dialogs.DetailDialog
 import com.dhkim.gamsahanilsang.presentation.screen.settings.SettingsScreen
 import com.dhkim.gamsahanilsang.presentation.screen.stats.StatsScreen
 import com.dhkim.gamsahanilsang.presentation.ui.components.BottomNavigationBar

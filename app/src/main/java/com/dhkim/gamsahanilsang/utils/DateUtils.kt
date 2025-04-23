@@ -1,4 +1,4 @@
-package com.dhkim.gamsahanilsang.presentation.utils
+package com.dhkim.gamsahanilsang.utils
 
 import java.text.SimpleDateFormat
 import java.util.Calendar

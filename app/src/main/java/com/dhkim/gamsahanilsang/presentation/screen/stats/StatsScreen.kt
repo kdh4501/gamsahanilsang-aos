@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
-import com.dhkim.gamsahanilsang.presentation.utils.DateUtils
+import com.dhkim.gamsahanilsang.utils.DateUtils
 import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModel
 import ir.ehsannarmani.compose_charts.ColumnChart
 import ir.ehsannarmani.compose_charts.models.BarProperties

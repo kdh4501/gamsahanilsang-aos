@@ -1,11 +1,17 @@
 package com.dhkim.gamsahanilsang.utils
 
 import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
 object DateUtils {
+    object DateFormatters {
+        val DATE_FORMAT = "yyyy-MM-dd"
+    }
+
     /**
      * "yyyy-MM-dd" 형식의 날짜 문자열을 받아서
      * 오늘 날짜면 "오늘 M.d" 형식으로,
@@ -13,7 +19,7 @@ object DateUtils {
      * 예) "2025-04-10" -> "목 4.10", 오늘이면 "오늘 4.16"
      */
     fun formatDateLabel(dateString: String): String {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val inputFormat = SimpleDateFormat(DateFormatters.DATE_FORMAT, Locale.getDefault())
         val date: Date? = try {
             inputFormat.parse(dateString)
         } catch (e: Exception) {
@@ -36,5 +42,11 @@ object DateUtils {
             val monthDayFormat = SimpleDateFormat("M.d", Locale.getDefault())
             "${dayOfWeekFormat.format(date)} ${monthDayFormat.format(date)}"
         }
+    }
+
+    fun formatToday(): String {
+        val today = LocalDate.now()
+        val formatter = DateTimeFormatter.ofPattern(DateFormatters.DATE_FORMAT)
+        return today.format(formatter)
     }
 }

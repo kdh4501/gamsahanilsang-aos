@@ -25,28 +25,22 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.dhkim.gamsahanilsang.R
-import com.dhkim.gamsahanilsang.data.database.AppDatabase
-import com.dhkim.gamsahanilsang.data.repository.RoomGratitudeRepository
-import com.dhkim.gamsahanilsang.domain.usecase.GratitudeUseCase
 import com.dhkim.gamsahanilsang.presentation.gratitude.GratitudeScreen
 import com.dhkim.gamsahanilsang.presentation.screen.settings.SettingsScreen
 import com.dhkim.gamsahanilsang.presentation.screen.stats.StatsScreen
 import com.dhkim.gamsahanilsang.presentation.ui.components.BottomNavigationBar
 import com.dhkim.gamsahanilsang.presentation.ui.theme.MyTheme
 import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModel
-import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val gratitudeDao by lazy { AppDatabase.getDatabase(this).gratitudeDao() }
-    private val viewModel: MainViewModel by viewModels { MainViewModelFactory(gratitudeUseCase) }
-
-    private lateinit var gratitudeUseCase: GratitudeUseCase
+    private val viewModel: MainViewModel by viewModels()
 
     @OptIn(ExperimentalMaterial3Api::class)
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        gratitudeUseCase = GratitudeUseCase(RoomGratitudeRepository(gratitudeDao))
 
         setContent {
             MyTheme {

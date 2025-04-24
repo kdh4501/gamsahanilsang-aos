@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.usecase.GratitudeUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,9 +16,13 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import javax.inject.Inject
 import kotlin.math.abs
 
-class MainViewModel(private  val gratitudeUseCase: GratitudeUseCase) : ViewModel() {
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private  val gratitudeUseCase: GratitudeUseCase
+) : ViewModel() {
     companion object {
         private const val DATE_FORMAT = "yyyy-MM-dd"
         private const val FLOW_TIMEOUT_MS = 5000L

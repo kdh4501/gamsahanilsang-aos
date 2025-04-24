@@ -4,7 +4,7 @@ plugins {
     alias(libs.plugins.kapt)
     alias(libs.plugins.googlDevToolsKSP)
     kotlin("plugin.serialization") version "2.0.21"
-    id("com.google.dagger.hilt.android") version "2.48.1" apply false
+    id("com.google.dagger.hilt.android")
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
 }
 
@@ -99,7 +99,8 @@ dependencies {
 
     // Hilt
     implementation("com.google.dagger:hilt-android:2.56.1")
-    ksp("com.google.dagger:hilt-android-compiler:2.56.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.56.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
 }
 java {
     toolchain {

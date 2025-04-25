@@ -24,7 +24,7 @@ class NotificationWorker(
         notificationManager.showNotification(notificationData)
 
         // 다음 날 동일 시간에 다시 알림 예약
-        val scheduler = NotificationScheduler(applicationContext, notificationManager)
+        val scheduler = NotificationScheduler(applicationContext)
         scheduler.scheduleDailyGratitudeNotification(hour = 21, minute = 0)  // 예: 오후 9시
 
         return Result.success()

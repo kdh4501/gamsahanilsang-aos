@@ -101,6 +101,9 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.56.1")
     kapt("com.google.dagger:hilt-android-compiler:2.56.1")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+
+    val work_version = "2.10.1"
+    implementation("androidx.work:work-runtime-ktx:$work_version")
 }
 java {
     toolchain {

@@ -14,4 +14,6 @@
     <string name="description_search">Search</string>
     <string name="description_contents_add">Contents Add</string>
     <string name="streak_toast_message">Record %d days in a row until today</string>
+    <string name="daily_notification_title">Thank you for today</string>
+    <string name="daily_notification_message">Record what you`re thankful for today!</string>
 </resources>

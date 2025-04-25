@@ -7,14 +7,12 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.dhkim.gamsahanilsang.R
 import com.dhkim.gamsahanilsang.domain.model.NotificationData
-import com.dhkim.gamsahanilsang.domain.notification.NotificationManager
 import com.dhkim.gamsahanilsang.utils.Constants
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 class NotificationScheduler(
     private val context: Context,
-    private val notificationManager: NotificationManager
 ) {
 
     fun scheduleDailyGratitudeNotification(hour: Int, minute: Int) {

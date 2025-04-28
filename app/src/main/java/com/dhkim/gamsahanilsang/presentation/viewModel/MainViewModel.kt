@@ -14,10 +14,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
-import kotlin.math.abs
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
@@ -127,30 +126,61 @@ class MainViewModel @Inject constructor(
         val dateFormat = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
 
         // 날짜별로 그룹화하고 정렬
-        val dates = gratitudes.map { it.date }
-            .distinct()
-            .sortedDescending()
+        val datesSet = gratitudes.map { it.date }
+
+        // 날짜 문자열을 Date 객체로 변환하고 내림차순 정렬
+        val dateObjects = datesSet.mapNotNull {
+            try { dateFormat.parse(it) } catch (e: Exception) { null }
+        }.sortedByDescending { it.time }
+
+        if (dateObjects.isEmpty()) return 0
 
         // 오늘 날짜와 비교
-        val todayStr = dateFormat.format(Date())
-        if (dates.isEmpty() || dates[0] != todayStr) {
-            return 0    // 오늘 기록이 없으면 연속0일
-        }
+        val today = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.time
+
+        // 가장 최근 기록이 오늘이 아니면 연속 0일
+        val mostRecentDate = Calendar.getInstance().apply {
+            time = dateObjects[0]
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.time
+
+        if (mostRecentDate.time != today.time) return 0
 
         var streak = 1
-        var prevDate = dateFormat.parse(dates[0])!!
+        var prevCalendar = Calendar.getInstance().apply { time = dateObjects[0] }
 
-        for (i in 1 until dates.size) {
-            val nextDate = dateFormat.parse(dates[i])!!
+        for (i in 1 until dateObjects.size) {
+            val currentCalendar = Calendar.getInstance().apply { time = dateObjects[i] }
 
-            val diffInMillis = prevDate.time - nextDate.time
-            val diffInDays = abs(diffInMillis) / (1000 * 60 * 60 * 24)
+            // 이전 날짜에서 하루 빼기
+            prevCalendar.add(Calendar.DAY_OF_YEAR, -1)
 
-            if (diffInDays == 1L) {
+            // 날짜만 비교 (시간 무시)
+            val prevDateOnly = Calendar.getInstance().apply {
+                set(prevCalendar.get(Calendar.YEAR), prevCalendar.get(Calendar.MONTH), prevCalendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+
+            val currDateOnly = Calendar.getInstance().apply {
+                set(currentCalendar.get(Calendar.YEAR), currentCalendar.get(Calendar.MONTH), currentCalendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0)
+                set(Calendar.MILLISECOND, 0)
+            }
+
+            if (prevDateOnly.time.time == currDateOnly.time.time) {
+                // 연속된 날짜 발견
                 streak++
-                prevDate = nextDate
-            } else if (diffInDays > 1L) {
-                break   // 연속 실패
+                prevCalendar = currentCalendar
+            } else {
+                // 연속 중단
+                break
             }
         }
 

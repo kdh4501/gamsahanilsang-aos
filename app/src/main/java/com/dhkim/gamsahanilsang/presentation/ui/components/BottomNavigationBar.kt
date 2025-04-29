@@ -8,6 +8,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
 
 @Composable
@@ -24,12 +28,16 @@ fun BottomNavigationBar(
             NavigationItem.Settings
         )
 
+        var selectedTab by remember { mutableStateOf<String?>(null) }
+
         items.forEach { item ->
             NavigationBarItem(
                 icon = { Icon(imageVector = item.icon, contentDescription = null) },
                 label = null,
-                selected = currentScreen == item.route,
+                selected = selectedTab == item.route,
                 onClick = {
+                    selectedTab = item.route
+
                     when (item) {
                         NavigationItem.Home -> {
                             onNavigateToHome()

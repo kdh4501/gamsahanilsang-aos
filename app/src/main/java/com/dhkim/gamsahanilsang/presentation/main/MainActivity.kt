@@ -83,10 +83,15 @@ class MainActivity : ComponentActivity() {
                                 // 홈화면 네비게이션 중복 이동 방지
                                 if (navController.currentDestination?.route != "gratitudeList") {
                                     navController.navigate("gratitudeList")
-                                }
-                                               },
-                            onNavigateToStats = { navController.navigate("stats") },
-                            onNavigateToSettings = { navController.navigate("settings") }
+                                } },
+                            onNavigateToStats = {
+                                if (navController.currentDestination?.route != "stats") {
+                                    navController.navigate("stats")
+                                } },
+                            onNavigateToSettings = {
+                                if (navController.currentDestination?.route != "settings") {
+                                    navController.navigate("settings")
+                                } }
                         )
                     }
                 ) { paddingValues ->

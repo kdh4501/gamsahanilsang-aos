@@ -57,7 +57,7 @@ class NotificationScheduler(
     }
 
     // 테스트용 메서드
-    fun scheduleTestNotification(delayMinutes: Int = 1) {
+    fun scheduleTestNotificationSeconds(delaySeconds: Int = 10) {
         val workManager = WorkManager.getInstance(context)
 
         val notificationData = NotificationData(
@@ -75,14 +75,28 @@ class NotificationScheduler(
         )
 
         val notificationWork = OneTimeWorkRequestBuilder<NotificationWorker>()
-            .setInitialDelay(delayMinutes.toLong(), TimeUnit.MINUTES)
+            .setInitialDelay(delaySeconds.toLong(), TimeUnit.SECONDS)
             .setInputData(data)
             .build()
 
         workManager.enqueueUniqueWork(
-            "test_notification",
+            "test_notification_seconds",
             ExistingWorkPolicy.REPLACE,
             notificationWork
         )
+    }
+
+    fun showTestNotificationImmediately() {
+        val notificationData = NotificationData(
+            id = 1002,
+            title = context.getString(R.string.daily_notification_title),
+            message = context.getString(R.string.daily_notification_message),
+            channelId = Constants.NOTIFICATION_CHANNEL_ID
+        )
+
+        val notificationManager = NotificationManagerImpl(context)
+        notificationManager.showNotification(notificationData)
+
+        Log.d("NotificationTest", "즉시 알림 표시 요청됨")
     }
 }

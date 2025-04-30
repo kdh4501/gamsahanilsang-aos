@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresExtension
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Search
@@ -16,19 +17,26 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.dhkim.gamsahanilsang.BuildConfig
 import com.dhkim.gamsahanilsang.R
 import com.dhkim.gamsahanilsang.presentation.gratitude.GratitudeScreen
+import com.dhkim.gamsahanilsang.presentation.notification.NotificationScheduler
 import com.dhkim.gamsahanilsang.presentation.screen.settings.SettingsScreen
 import com.dhkim.gamsahanilsang.presentation.screen.stats.StatsScreen
 import com.dhkim.gamsahanilsang.presentation.ui.components.BottomNavigationBar
@@ -39,11 +47,33 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
-
+    private lateinit var notificationScheduler: NotificationScheduler
     @OptIn(ExperimentalMaterial3Api::class)
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        /*
+        // ⭐️ 테스트용 데이터
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val today = Calendar.getInstance()
+        val yesterday = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -1) }
+        val twoDaysAgo = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -2) }
+
+        // ✨ 테스트용 GratitudeItem 리스트 생성
+        val testData = listOf(
+            GratitudeItem(gratitudeText = "오늘 감사한 것", date = dateFormat.format(today.time)),
+            GratitudeItem(gratitudeText = "어제 감사한 것", date = dateFormat.format(yesterday.time)),
+            GratitudeItem(gratitudeText = "그저께 감사한 것", date = dateFormat.format(twoDaysAgo.time))
+        )
+
+        // ⭐️ calculateStreak 호출
+        val streak = viewModel.calculateStreak(testData)
+
+        // ⭐️ 결과를 Toast로 띄우기
+        Toast.makeText(this, "🔥 테스트 Streak 결과: ${streak}일", Toast.LENGTH_LONG).show()
+        */
+        notificationScheduler = NotificationScheduler(applicationContext)
         checkAndRequestNotificationPermission()
         setContent {
             MyTheme {
@@ -63,8 +93,35 @@ class MainActivity : ComponentActivity() {
                                         contentDescription = stringResource(R.string.description_search)
                                     )
                                 }
+                                // 테스트용 버튼
+//                                Button(onClick = { sendTestNotification() }) {
+//                                    Text(text = "알림 테스트")
+//                                }
                             },
                             actions = {
+
+                                // 테스트 버튼 추가 (10초 테스트)
+                                if (BuildConfig.DEBUG) {
+                                    TextButton(
+                                        onClick = {
+                                            notificationScheduler.scheduleTestNotificationSeconds(10)
+                                            notificationScheduler.showTestNotificationImmediately()
+                                            Toast.makeText(
+                                                applicationContext,
+                                                "10초 후에 알림이 발생합니다.",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        },
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    ) {
+                                        Text(
+                                            text = "10초 테스트",
+                                            color = MaterialTheme.colorScheme.primary,
+                                            fontSize = 12.sp
+                                        )
+                                    }
+                                }
+
                                 IconButton(onClick = {
                                     showInputArea = true
                                 }) {
@@ -113,6 +170,18 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+//    private fun sendTestNotification() {
+//        val notificationData = com.dhkim.gamsahanilsang.domain.model.NotificationData(
+//            id = 9999,
+//            title = "테스트 알림",
+//            message = "알림 기능이 정상 동작합니다.",
+//            channelId = Constants.NOTIFICATION_CHANNEL_ID
+//        )
+//
+//        val notificationManager = NotificationManagerImpl(this)
+//        notificationManager.showNotification(notificationData)
+//    }
 
     private val requestNotificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->

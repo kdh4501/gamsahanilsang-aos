@@ -15,7 +15,7 @@ class NotificationManagerImpl(
 
     override fun showNotification(notificationData: NotificationData) {
         val builder = NotificationCompat.Builder(context, notificationData.channelId)
-            .setSmallIcon(R.drawable.ic_launcher)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(notificationData.title)
             .setContentText(notificationData.message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)

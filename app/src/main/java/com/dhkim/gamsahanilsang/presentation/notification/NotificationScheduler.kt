@@ -56,4 +56,33 @@ class NotificationScheduler(
         )
     }
 
+    // 테스트용 메서드
+    fun scheduleTestNotification(delayMinutes: Int = 1) {
+        val workManager = WorkManager.getInstance(context)
+
+        val notificationData = NotificationData(
+            id = 1001,
+            title = context.getString(R.string.daily_notification_title),
+            message = context.getString(R.string.daily_notification_message),
+            channelId = Constants.NOTIFICATION_CHANNEL_ID
+        )
+
+        val data = workDataOf(
+            "notification_id" to notificationData.id,
+            "title" to notificationData.title,
+            "message" to notificationData.message,
+            "channel_id" to notificationData.channelId
+        )
+
+        val notificationWork = OneTimeWorkRequestBuilder<NotificationWorker>()
+            .setInitialDelay(delayMinutes.toLong(), TimeUnit.MINUTES)
+            .setInputData(data)
+            .build()
+
+        workManager.enqueueUniqueWork(
+            "test_notification",
+            ExistingWorkPolicy.REPLACE,
+            notificationWork
+        )
+    }
 }

@@ -3,12 +3,17 @@ package com.dhkim.gamsahanilsang.presentation.notification
 import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.dhkim.gamsahanilsang.data.notification.NotificationManagerImpl
 import com.dhkim.gamsahanilsang.domain.model.NotificationData
+import com.dhkim.gamsahanilsang.domain.notification.NotificationManager
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 
-class NotificationWorker(
-    context: Context,
-    workerParams: WorkerParameters
+class NotificationWorker @AssistedInject constructor(
+    @Assisted context: Context,
+    @Assisted workerParams: WorkerParameters,
+    private val notificationManager: NotificationManager,
+    private val notificationScheduler: NotificationScheduler
 ) : Worker(context, workerParams) {
 
     override fun doWork(): Result {
@@ -19,14 +24,20 @@ class NotificationWorker(
 
         val notificationData = NotificationData(id, title, message, channelId)
 
-        // 의존성 주입이 어려우면 싱글톤 또는 서비스 locator 패턴 활용
-        val notificationManager = NotificationManagerImpl(applicationContext)
+        // 알림 표시
         notificationManager.showNotification(notificationData)
 
-        // 다음 날 동일 시간에 다시 알림 예약
-        val scheduler = NotificationScheduler(applicationContext)
-        scheduler.scheduleDailyGratitudeNotification(hour = 21, minute = 0)  // 예: 오후 9시
+        // 다음 날 같은 시간에 다시 알림 예약
+        notificationScheduler.scheduleDailyGratitudeNotification(hour = 21, minute = 0)
 
         return Result.success()
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            @Assisted context: Context,
+            @Assisted workerParams: WorkerParameters
+        ): NotificationWorker
     }
 }

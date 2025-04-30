@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import com.dhkim.gamsahanilsang.R
+import com.dhkim.gamsahanilsang.presentation.notification.NotificationScheduler
 import com.dhkim.gamsahanilsang.utils.Constants
 import dagger.hilt.android.HiltAndroidApp
 
@@ -13,6 +14,8 @@ class BaseApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         createNotificationChannel()
+
+        scheduleNotification()  // 매일 저녁9시 알림 호출
     }
 
     private fun createNotificationChannel() {
@@ -29,5 +32,10 @@ class BaseApplication : Application() {
                 getSystemService(NotificationManager::class.java)
             notificationManager.createNotificationChannel(channel)
         }
+    }
+
+    private fun scheduleNotification() {
+        val notificationScheduler = NotificationScheduler(applicationContext)
+        notificationScheduler.scheduleDailyGratitudeNotification(21, 0)
     }
 }

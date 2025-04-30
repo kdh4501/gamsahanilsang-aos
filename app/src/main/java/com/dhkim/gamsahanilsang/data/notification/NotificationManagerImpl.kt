@@ -23,6 +23,4 @@ class NotificationManagerImpl(
 
         notificationManager.notify(notificationData.id,builder.build())
     }
-
-
 }

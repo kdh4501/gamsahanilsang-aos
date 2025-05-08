@@ -23,4 +23,8 @@ class GratitudeUseCase(private val repository: GratitudeRepository) {
     suspend fun deleteAllGratitude() {
         repository.deleteAllGratitude()
     }
+
+    suspend fun searchGratitudes(query: String): List<GratitudeItem> {
+        return repository.searchGratitudes(query)
+    }
 }

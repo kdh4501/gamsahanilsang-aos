@@ -4,6 +4,8 @@ import com.dhkim.gamsahanilsang.data.dao.GratitudeDao
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.repository.GratitudeRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class RoomGratitudeRepository(private val gratitudeDao: GratitudeDao) : GratitudeRepository {
@@ -29,5 +31,11 @@ class RoomGratitudeRepository(private val gratitudeDao: GratitudeDao) : Gratitud
 
     override suspend fun deleteAllGratitude() {
         gratitudeDao.deleteAll()
+    }
+
+    override suspend fun searchGratitudes(query: String): List<GratitudeItem> {
+        return withContext(Dispatchers.IO) {
+            gratitudeDao.searchGratitudes(query)
+        }
     }
 }

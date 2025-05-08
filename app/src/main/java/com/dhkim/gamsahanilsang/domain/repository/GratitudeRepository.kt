@@ -8,4 +8,5 @@ interface GratitudeRepository {
     suspend fun update(item: GratitudeItem)
     suspend fun delete(item: GratitudeItem)
     suspend fun deleteAllGratitude()
+    suspend fun searchGratitudes(searchQuery: String): List<GratitudeItem>
 }

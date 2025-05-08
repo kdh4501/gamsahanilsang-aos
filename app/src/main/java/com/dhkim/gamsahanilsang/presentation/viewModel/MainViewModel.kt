@@ -31,6 +31,26 @@ class MainViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState = _uiState.asStateFlow()
 
+    // 검색 관련 상태
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery = _searchQuery.asStateFlow()
+
+    private val _isSearchActive = MutableStateFlow(false)
+    val isSearchActive = _isSearchActive.asStateFlow()
+
+    // 검색 결과
+    private val _searchResults = MutableStateFlow<List<GratitudeItem>>(emptyList())
+    val searchResults = _searchResults.asStateFlow()
+
+    // 검색 결과를 날짜별로 그룹화
+    val groupedSearchResults: StateFlow<Map<String, List<GratitudeItem>>> = _searchResults.map {
+        it.groupBy { item -> item.date }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(FLOW_TIMEOUT_MS),
+        initialValue = emptyMap()
+    )
+
     val groupedGratitudes: StateFlow<Map<String, List<GratitudeItem>>> = _uiState.map{
         it.gratitudeList.groupBy { item -> item.date }
     }.stateIn(
@@ -41,6 +61,46 @@ class MainViewModel @Inject constructor(
 
     init {
         loadGratitudes()
+    }
+
+    // 검색 활성화/비활성화 설정
+    fun setSearchActive(active: Boolean) {
+        _isSearchActive.value = active
+        if (!active) {
+            clearSearch()
+        }
+    }
+
+    // 검색어 업데이트 및 검색 실행
+    fun updateSearchQuery(query: String) {
+        _searchQuery.value = query
+        if (query.isNotEmpty()) {
+            searchGratitudes(query)
+        } else {
+            _searchResults.value = emptyList()
+        }
+    }
+
+    // 검색 실행
+    private fun searchGratitudes(query: String) {
+        viewModelScope.launch {
+            try {
+                // 현재 로드된 감사 목록에서 검색
+                val results = _uiState.value.gratitudeList.filter {
+                    it.gratitudeText.contains(query, ignoreCase = true)
+                }
+                _searchResults.value = results
+            } catch (e: Exception) {
+                _searchResults.value = emptyList()
+                _uiState.update { it.copy(error = "검색 중 오류가 발생했습니다: ${e.message}") }
+            }
+        }
+    }
+
+    // 검색 초기화
+    fun clearSearch() {
+        _searchQuery.value = ""
+        _searchResults.value = emptyList()
     }
 
     fun markStreakToastShown() {

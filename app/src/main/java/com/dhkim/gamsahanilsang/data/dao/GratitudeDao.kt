@@ -23,4 +23,7 @@ interface GratitudeDao {
 
     @Query("DELETE FROM gratitude_items")
     suspend fun deleteAll()
+
+    @Query("SELECT * FROM gratitude_items WHERE gratitudeText LIKE '%' || :query || '%' ORDER BY date DESC")
+    fun searchGratitudes(query: String): List<GratitudeItem>
 }

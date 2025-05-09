@@ -49,4 +49,12 @@ object DateUtils {
         val formatter = DateTimeFormatter.ofPattern(DateFormatters.DATE_FORMAT)
         return today.format(formatter)
     }
+
+    fun formatYesterday(): String {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_YEAR, -1) // 어제 날짜로 설정
+
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        return dateFormat.format(calendar.time)
+    }
 }

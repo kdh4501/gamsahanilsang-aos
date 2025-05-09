@@ -1,68 +1,124 @@
 package com.dhkim.gamsahanilsang.utils
 
-import android.content.Context
-import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import com.dhkim.gamsahanilsang.R
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 
 /**
- * 앱 전반에서 사용되는 다이얼로그를 관리하는 유틸리티 클래스
+ * Compose 환경에서 사용할 수 있는 다이얼로그 관리자
  */
-class DialogManager(private val context: Context) {
-
+class DialogManager {
     /**
-     * 감사 항목 편집을 위한 다이얼로그를 표시합니다.
-     *
-     * @param item 편집할 감사 항목
-     * @param onConfirm 편집 완료 후 호출될 콜백 (업데이트된 텍스트 전달)
+     * 감사 항목 편집을 위한 다이얼로그 상태와 컴포넌트
      */
-    fun showEditDialog(
-        item: GratitudeItem,
+    @Composable
+    fun EditDialog(
+        item: GratitudeItem?,
+        onDismiss: () -> Unit,
         onConfirm: (String) -> Unit
     ) {
-        val editText = EditText(context).apply {
-            setText(item.gratitudeText)
+        if (item != null) {
+            var editedText by remember { mutableStateOf(item.gratitudeText) }
+
+            AlertDialog(
+                onDismissRequest = onDismiss,
+                title = { Text(stringResource(R.string.edit_button)) },
+                text = {
+                    OutlinedTextField(
+                        value = editedText,
+                        onValueChange = { editedText = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        label = { Text(stringResource(R.string.input_hint)) }
+                    )
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            if (editedText.isNotBlank()) {
+                                onConfirm(editedText)
+                            }
+                            onDismiss()
+                        }
+                    ) {
+                        Text(stringResource(R.string.ok))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = onDismiss) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                }
+            )
         }
-
-        AlertDialog.Builder(context)
-            .setTitle(context.getString(R.string.edit_button))
-            .setView(editText)
-            .setPositiveButton(context.getString(R.string.ok)) { _, _ ->
-                val updateText = editText.text.toString()
-                onConfirm(updateText)
-            }
-            .setNegativeButton(context.getString(R.string.cancel), null)
-            .show()
     }
 
     /**
-     * 삭제 확인 다이얼로그를 표시합니다.
-     *
-     * @param onConfirm 삭제 확인 시 호출될 콜백
+     * 삭제 확인 다이얼로그 컴포넌트
      */
-    fun showDeleteConfirmationDialog(onConfirm: () -> Unit) {
-//        AlertDialog.Builder(context)
-//            .setTitle(context.getString(R.string.delete_title))
-//            .setMessage(context.getString(R.string.delete_confirmation))
-//            .setPositiveButton(context.getString(R.string.delete)) { _, _ ->
-//                onConfirm()
-//            }
-//            .setNegativeButton(context.getString(R.string.cancel), null)
-//            .show()
+    @Composable
+    fun DeleteConfirmationDialog(
+        show: Boolean,
+        onDismiss: () -> Unit,
+        onConfirm: () -> Unit
+    ) {
+        if (show) {
+            /*
+            AlertDialog(
+                onDismissRequest = onDismiss,
+                title = { Text(stringResource(R.string.delete_title)) },
+                text = { Text(stringResource(R.string.delete_confirmation)) },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            onConfirm()
+                            onDismiss()
+                        }
+                    ) {
+                        Text(stringResource(R.string.delete))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = onDismiss) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                }
+            )
+             */
+        }
     }
 
     /**
-     * 정보 메시지 다이얼로그를 표시합니다.
-     *
-     * @param title 다이얼로그 제목
-     * @param message 다이얼로그 메시지
+     * 정보 메시지 다이얼로그 컴포넌트
      */
-    fun showInfoDialog(title: String, message: String) {
-        AlertDialog.Builder(context)
-            .setTitle(title)
-            .setMessage(message)
-            .setPositiveButton(context.getString(R.string.ok), null)
-            .show()
+    @Composable
+    fun InfoDialog(
+        show: Boolean,
+        title: String,
+        message: String,
+        onDismiss: () -> Unit
+    ) {
+        if (show) {
+            AlertDialog(
+                onDismissRequest = onDismiss,
+                title = { Text(title) },
+                text = { Text(message) },
+                confirmButton = {
+                    TextButton(onClick = onDismiss) {
+                        Text(stringResource(R.string.ok))
+                    }
+                }
+            )
+        }
     }
 }

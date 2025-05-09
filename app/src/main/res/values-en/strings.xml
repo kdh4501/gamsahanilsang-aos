@@ -20,4 +20,5 @@
     <string name="search_close">Close Search</string>
     <string name="search">Search</string>
     <string name="search_word_clear">Clear search terms</string>
+    <string name="contents">Contents</string>
 </resources>

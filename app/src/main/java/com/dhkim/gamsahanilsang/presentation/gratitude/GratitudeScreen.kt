@@ -33,9 +33,9 @@ import androidx.compose.ui.unit.dp
 import com.dhkim.gamsahanilsang.R
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.presentation.gratitude.components.GratitudeList
-import com.dhkim.gamsahanilsang.presentation.gratitude.dialogs.DetailDialog
 import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModel
 import com.dhkim.gamsahanilsang.utils.DateUtils
+import com.dhkim.gamsahanilsang.utils.DialogManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,6 +55,9 @@ fun GratitudeScreen(
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
+
+    // 다이얼로그 관리자
+    val dialogManager = remember { DialogManager(context) }
 
     fun hideKeyboard() {
         keyboardController?.hide()
@@ -112,8 +115,7 @@ fun GratitudeScreen(
         )
 
         if (showDialog && selectedItem != null) {
-            DetailDialog(
-                showDialog = showDialog,
+            dialogManager.EditDialog(
                 onDismiss = { showDialog = false; selectedItem = null },
                 item = selectedItem!!,
                 viewModel = viewModel

@@ -16,4 +16,8 @@
     <string name="streak_toast_message">Record %d days in a row until today</string>
     <string name="daily_notification_title">Thank you for today</string>
     <string name="daily_notification_message">Record what you`re thankful for today!</string>
+    <string name="search_placeholder_text">Search…</string>
+    <string name="search_close">Close Search</string>
+    <string name="search">Search</string>
+    <string name="search_word_clear">Clear search terms</string>
 </resources>

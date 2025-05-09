@@ -94,7 +94,7 @@ fun GratitudeScreen(
                         viewModel.saveGratitude(gratitudeText)
                         gratitudeText = ""
                         hideKeyboard()
-                        onInputAreaHidden
+                        onInputAreaHidden()
                     }
                 },
                 onClear = { gratitudeText = ""}

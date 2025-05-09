@@ -43,7 +43,8 @@ fun GratitudeScreen(
     viewModel: MainViewModel,
     paddingValues: PaddingValues,
     showInputArea: Boolean = false,
-    onInputAreaHidden: () -> Unit
+    onInputAreaHidden: () -> Unit,
+    isSearchActive: Boolean = false
 ){
     var gratitudeText by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
@@ -88,7 +89,8 @@ fun GratitudeScreen(
             .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
-        if (showInputArea) {
+        // 검색 모드가 아닐 때만 입력 영역 표시
+        if (showInputArea && !isSearchActive) {
             GratitudeInputArea(
                 gratitudeText = gratitudeText,
                 onTextChange = { gratitudeText = it },
@@ -100,18 +102,20 @@ fun GratitudeScreen(
                         onInputAreaHidden()
                     }
                 },
-                onClear = { gratitudeText = ""}
+                onClear = { gratitudeText = ""},
             )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // 감사 목록 또는 검색 결과 표시
         GratitudeList(
             viewModel = viewModel,
             onItemClick = { item ->
                 selectedItem = item
                 showDialog = true
-            }
+            },
+            isSearchMode = isSearchActive // 검색 모드 전달
         )
 
         if (showDialog && selectedItem != null) {

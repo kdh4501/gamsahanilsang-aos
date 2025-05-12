@@ -47,6 +47,7 @@ import com.dhkim.gamsahanilsang.presentation.ui.components.BottomNavigationBar
 import com.dhkim.gamsahanilsang.presentation.ui.components.GratitudeSearchBar
 import com.dhkim.gamsahanilsang.presentation.ui.theme.MyTheme
 import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModel
+import com.dhkim.gamsahanilsang.utils.DialogManager
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -92,6 +93,9 @@ class MainActivity : ComponentActivity() {
                 var showDialog by remember { mutableStateOf(false) }
                 var selectedItem by remember { mutableStateOf<GratitudeItem?>(null) }
 
+                // DialogManager 인스턴스 생성 (클래스 멤버 변수로 선언하거나 remember로 상태 유지)
+                val dialogManager = remember { DialogManager(applicationContext) }
+
                 Scaffold(
                     topBar = {
                         if (isSearchActive) {
@@ -113,7 +117,8 @@ class MainActivity : ComponentActivity() {
                                     onBackClick = { viewModel.setSearchActive(false) },
                                     searchResults = searchResults,
                                     onResultClick = { item ->
-                                        // 검색 결과 클릭 시 처리
+                                        // 검색 결과 클릭 시 선택된 다이얼로그 표시
+                                        // 검색 결과 클릭 시 상태만 변경
                                         selectedItem = item
                                         showDialog = true
                                     },
@@ -121,6 +126,18 @@ class MainActivity : ComponentActivity() {
                                         .fillMaxWidth()
                                         .padding(8.dp)
                                 )
+
+                                // Composable 함수 내에서 조건부로 다이얼로그 표시
+                                if (showDialog && selectedItem != null) {
+                                    dialogManager.EditDialog(
+                                        onDismiss = {
+                                            showDialog = false
+                                            selectedItem = null
+                                        },
+                                        item = selectedItem!!,
+                                        viewModel = viewModel
+                                    )
+                                }
                             }
 
                         } else {

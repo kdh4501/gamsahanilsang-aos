@@ -2,10 +2,11 @@ package com.dhkim.gamsahanilsang.data.repository
 
 import com.dhkim.gamsahanilsang.data.dao.GratitudeDao
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
+import com.dhkim.gamsahanilsang.domain.model.GratitudeFilter
+import com.dhkim.gamsahanilsang.domain.model.SortOrder
 import com.dhkim.gamsahanilsang.domain.repository.GratitudeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
 class RoomGratitudeRepository(private val gratitudeDao: GratitudeDao) : GratitudeRepository {
@@ -37,5 +38,18 @@ class RoomGratitudeRepository(private val gratitudeDao: GratitudeDao) : Gratitud
         return withContext(Dispatchers.IO) {
             gratitudeDao.searchGratitudes(query)
         }
+    }
+
+    override fun getFilteredGratitudeItems(filter: GratitudeFilter): Flow<List<GratitudeItem>> {
+        return gratitudeDao.getFilterGratitudeItems(
+            startDate = filter.dateRange?.startDate?.toString(),
+            endDate = filter.dateRange?.endDate?.toString(),
+            keyword = filter.keyword,
+            sortOrder = when (filter.sortOrder) {
+                SortOrder.NEWEST_FIRST -> "date DESC"
+                SortOrder.OLDEST_FIRST -> "date ASC"
+                SortOrder.ALPHABETICAL -> "gratitudeText ASC"
+            }
+        )
     }
 }

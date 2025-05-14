@@ -121,9 +121,16 @@ class MainActivity : ComponentActivity() {
                                     searchResults = searchResults,
                                     onResultClick = { item ->
                                         // 검색 결과 클릭 시 선택된 다이얼로그 표시
-                                        // 검색 결과 클릭 시 상태만 변경
-                                        selectedItem = item
-                                        showDialog = true
+                                        // DialogManager를 통해 다이얼로그 표시
+                                        dialogManager.showEditDialog(
+                                            gratitudeItem = item,
+                                            onSave = { updatedItem ->
+                                                viewModel.updateGratitude(updatedItem)
+                                            },
+                                            onDelete = { itemToDelete ->
+                                                viewModel.deleteGratitude(itemToDelete)
+                                            }
+                                        )
                                     },
                                     modifier = Modifier
                                         .fillMaxWidth()

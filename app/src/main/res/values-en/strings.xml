@@ -21,4 +21,20 @@
     <string name="search">Search</string>
     <string name="search_word_clear">Clear search terms</string>
     <string name="contents">Contents</string>
+
+    <!-- 필터 관련 문자열 -->
+    <string name="filter_title">Filter Settings</string>
+    <string name="date_range">date range</string>
+    <string name="select_date_range">Select date range</string>
+    <string name="keyword">keyword</string>
+    <string name="sort_order">Sort order</string>
+    <string name="newest_first">up-to-date order</string>
+    <string name="oldest_first">an old order</string>
+    <string name="alphabetical">alphabetical order</string>
+    <string name="reset">initialization</string>
+    <string name="apply">apply</string>
+    <string name="start_date">Start date</string>
+    <string name="end_date">End date</string>
+    <string name="confirm">OK</string>
+    <string name="filter_reset">Filter Initialization</string>
 </resources>

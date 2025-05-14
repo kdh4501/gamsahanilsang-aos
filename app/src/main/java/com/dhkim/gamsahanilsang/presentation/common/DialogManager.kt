@@ -51,7 +51,7 @@ class DialogManager(private val context: Context) {
         )
     }
 
-    // 필터 다이얼로그 표시
+    // 필터 다이얼로그 표시 메서드 추가
     fun showFilterDialog(
         currentFilter: GratitudeFilter,
         onFilterApplied: (GratitudeFilter) -> Unit,
@@ -59,8 +59,14 @@ class DialogManager(private val context: Context) {
     ) {
         _currentDialog.value = DialogType.FilterDialog(
             currentFilter = currentFilter,
-            onFilterApplied = onFilterApplied,
-            onFilterReset = onFilterReset,
+            onFilterApplied = { filter ->
+                onFilterApplied(filter)
+                hideDialog()
+            },
+            onFilterReset = {
+                onFilterReset()
+                hideDialog()
+            },
             onDismiss = { hideDialog() }
         )
     }

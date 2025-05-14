@@ -3,6 +3,9 @@ package com.dhkim.gamsahanilsang.presentation.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
+import com.dhkim.gamsahanilsang.domain.model.DateRange
+import com.dhkim.gamsahanilsang.domain.model.GratitudeFilter
+import com.dhkim.gamsahanilsang.domain.model.SortOrder
 import com.dhkim.gamsahanilsang.domain.usecase.GratitudeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +17,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.Calendar
 import java.util.Locale
 import javax.inject.Inject
@@ -50,6 +54,61 @@ class MainViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(FLOW_TIMEOUT_MS),
         initialValue = emptyMap()
     )
+
+    // 필터 상태
+    private val _filterState = MutableStateFlow(GratitudeFilter())
+    val filterState = _filterState.asStateFlow()
+
+    // 필터링된 감사 항목
+    private val _filteredGratitudes = MutableStateFlow<List<GratitudeItem>>(emptyList())
+    val filteredGratitudes = _filteredGratitudes.asStateFlow()
+
+    // 필터 상태 업데이트
+    fun updateFilter(filter: GratitudeFilter) {
+        _filterState.value = filter
+        applyFilter()
+    }
+
+    // 날짜 범위 설정
+    fun setDateRange(startDate: LocalDate, endDate: LocalDate) {
+        _filterState.value = _filterState.value.copy(
+            dateRange = DateRange(startDate, endDate)
+        )
+        applyFilter()
+    }
+
+    // 키워드 설정
+    fun setKeyword(keyword: String?) {
+        _filterState.value = _filterState.value.copy(
+            keyword = keyword?.takeIf { it.isNotBlank() }
+        )
+        applyFilter()
+    }
+
+    // 정렬 순서 설정
+    fun setSortOrder(sortOrder: SortOrder) {
+        _filterState.value = _filterState.value.copy(
+            sortOrder = sortOrder
+        )
+        applyFilter()
+    }
+
+    // 필터 적용
+    private fun applyFilter() {
+        viewModelScope.launch {
+            gratitudeUseCase.getFilteredGratitudeItems(_filterState.value)
+                .collect { items ->
+                    _filteredGratitudes.value = items
+                }
+        }
+    }
+
+    // 필터 초기화
+    fun resetFilter() {
+        _filterState.value = GratitudeFilter()
+        applyFilter()
+    }
+
 
     val groupedGratitudes: StateFlow<Map<String, List<GratitudeItem>>> = _uiState.map{
         it.gratitudeList.groupBy { item -> item.date }

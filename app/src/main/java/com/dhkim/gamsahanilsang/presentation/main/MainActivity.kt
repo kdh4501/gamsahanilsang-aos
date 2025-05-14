@@ -98,20 +98,7 @@ class MainActivity : ComponentActivity() {
                 val dialogManager = remember { DialogManager(applicationContext) }
                 // 현재 표시 중인 다이얼로 상태 구독
                 val currentDialog by dialogManager.currentDialog.collectAsState()
-                // 감사 항목 클릭 핸들러 수정
-                val onItemClick: (GratitudeItem) -> Unit = { item ->
-                    // 기존: selectedItem = item; showDialog = true
-                    // 변경: 다이얼로그 관리자를 통해 다이얼로그 표시
-                    dialogManager.showEditDialog(
-                        gratitudeItem = item,
-                        onSave = { updatedItem ->
-                            viewModel.deleteGratitude(updatedItem)
-                        },
-                        onDelete = { itemToDelete ->
-                            viewModel.deleteGratitude(itemToDelete)
-                        }
-                    )
-                }
+
                 Scaffold(
                     topBar = {
                         if (isSearchActive) {

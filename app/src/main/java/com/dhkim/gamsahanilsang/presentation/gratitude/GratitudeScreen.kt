@@ -31,7 +31,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dhkim.gamsahanilsang.R
-import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.presentation.common.DialogManager
 import com.dhkim.gamsahanilsang.presentation.common.components.EditDialogContent
 import com.dhkim.gamsahanilsang.presentation.gratitude.components.GratitudeList
@@ -48,8 +47,6 @@ fun GratitudeScreen(
     isSearchActive: Boolean = false
 ){
     var gratitudeText by remember { mutableStateOf("") }
-    var showDialog by remember { mutableStateOf(false) }
-    var selectedItem by remember { mutableStateOf<GratitudeItem?>(null) }
 
     val uiState by viewModel.uiState.collectAsState()
     val streak = uiState.streak
@@ -129,7 +126,6 @@ fun GratitudeScreen(
             },
             isSearchMode = isSearchActive // 검색 모드 전달
         )
-
         when (val dialog = currentDialog) {
             is DialogManager.DialogType.EditDialog -> {
                 EditDialogContent(

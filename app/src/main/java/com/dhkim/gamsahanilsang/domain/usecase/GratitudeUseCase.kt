@@ -1,7 +1,9 @@
 package com.dhkim.gamsahanilsang.domain.usecase
 
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
+import com.dhkim.gamsahanilsang.domain.model.GratitudeFilter
 import com.dhkim.gamsahanilsang.domain.repository.GratitudeRepository
+import kotlinx.coroutines.flow.Flow
 
 class GratitudeUseCase(private val repository: GratitudeRepository) {
     suspend fun execute(gratitudeItem: GratitudeItem) {
@@ -26,5 +28,10 @@ class GratitudeUseCase(private val repository: GratitudeRepository) {
 
     suspend fun searchGratitudes(query: String): List<GratitudeItem> {
         return repository.searchGratitudes(query)
+    }
+
+    // 필터링된 감사 항목을 가져오는 메서드 추가
+    suspend fun getFilteredGratitudeItems(filter: GratitudeFilter): Flow<List<GratitudeItem>> {
+        return repository.getFilteredGratitudeItems(filter)
     }
 }

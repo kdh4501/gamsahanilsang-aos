@@ -32,10 +32,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dhkim.gamsahanilsang.R
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
+import com.dhkim.gamsahanilsang.presentation.common.DialogManager
+import com.dhkim.gamsahanilsang.presentation.common.components.EditDialogContent
 import com.dhkim.gamsahanilsang.presentation.gratitude.components.GratitudeList
 import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModel
 import com.dhkim.gamsahanilsang.utils.DateUtils
-import com.dhkim.gamsahanilsang.utils.DialogManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,6 +60,9 @@ fun GratitudeScreen(
 
     // 다이얼로그 관리자
     val dialogManager = remember { DialogManager(context) }
+
+    // 현재 표시 중인 다이얼로 상태 구독
+    val currentDialog by dialogManager.currentDialog.collectAsState()
 
     fun hideKeyboard() {
         keyboardController?.hide()
@@ -112,18 +116,31 @@ fun GratitudeScreen(
         GratitudeList(
             viewModel = viewModel,
             onItemClick = { item ->
-                selectedItem = item
-                showDialog = true
+                // DialogManager를 통해 다이얼로그 표시
+                dialogManager.showEditDialog(
+                    gratitudeItem = item,
+                    onSave = { updatedItem ->
+                        viewModel.updateGratitude(updatedItem)
+                    },
+                    onDelete = { itemToDelete ->
+                        viewModel.deleteGratitude(itemToDelete)
+                    }
+                )
             },
             isSearchMode = isSearchActive // 검색 모드 전달
         )
 
-        if (showDialog && selectedItem != null) {
-            dialogManager.EditDialog(
-                onDismiss = { showDialog = false; selectedItem = null },
-                item = selectedItem!!,
-                viewModel = viewModel
-            )
+        when (val dialog = currentDialog) {
+            is DialogManager.DialogType.EditDialog -> {
+                EditDialogContent(
+                    gratitudeItem = dialog.gratitudeItem,
+                    onSave = dialog.onSave,
+                    onDelete = dialog.onDelete,
+                    onDismiss = dialog.onDismiss
+                )
+            }
+            // 다른 다이얼로그 타입 처리...
+            else -> { /* 표시할 다이얼로그 없음 */ }
         }
     }
 }

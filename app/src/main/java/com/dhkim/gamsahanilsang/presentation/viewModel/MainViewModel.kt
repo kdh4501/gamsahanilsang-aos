@@ -180,6 +180,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    // 감사 항목 업데이트 메서드 추가
     fun updateGratitude(item: GratitudeItem) {
         viewModelScope.launch {
             try {

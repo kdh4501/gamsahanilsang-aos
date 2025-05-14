@@ -6,7 +6,7 @@ import com.dhkim.gamsahanilsang.data.database.AppDatabase
 import com.dhkim.gamsahanilsang.data.repository.RoomGratitudeRepository
 import com.dhkim.gamsahanilsang.domain.repository.GratitudeRepository
 import com.dhkim.gamsahanilsang.domain.usecase.GratitudeUseCase
-import com.dhkim.gamsahanilsang.utils.DialogManager
+import com.dhkim.gamsahanilsang.presentation.common.DialogManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

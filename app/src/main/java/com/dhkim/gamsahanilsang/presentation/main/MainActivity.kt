@@ -39,6 +39,8 @@ import androidx.navigation.compose.rememberNavController
 import com.dhkim.gamsahanilsang.BuildConfig
 import com.dhkim.gamsahanilsang.R
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
+import com.dhkim.gamsahanilsang.presentation.common.DialogManager
+import com.dhkim.gamsahanilsang.presentation.common.components.EditDialogContent
 import com.dhkim.gamsahanilsang.presentation.gratitude.GratitudeScreen
 import com.dhkim.gamsahanilsang.presentation.notification.NotificationScheduler
 import com.dhkim.gamsahanilsang.presentation.screen.settings.SettingsScreen
@@ -47,7 +49,6 @@ import com.dhkim.gamsahanilsang.presentation.ui.components.BottomNavigationBar
 import com.dhkim.gamsahanilsang.presentation.ui.components.GratitudeSearchBar
 import com.dhkim.gamsahanilsang.presentation.ui.theme.MyTheme
 import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModel
-import com.dhkim.gamsahanilsang.utils.DialogManager
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -95,7 +96,22 @@ class MainActivity : ComponentActivity() {
 
                 // DialogManager 인스턴스 생성 (클래스 멤버 변수로 선언하거나 remember로 상태 유지)
                 val dialogManager = remember { DialogManager(applicationContext) }
-
+                // 현재 표시 중인 다이얼로 상태 구독
+                val currentDialog by dialogManager.currentDialog.collectAsState()
+                // 감사 항목 클릭 핸들러 수정
+                val onItemClick: (GratitudeItem) -> Unit = { item ->
+                    // 기존: selectedItem = item; showDialog = true
+                    // 변경: 다이얼로그 관리자를 통해 다이얼로그 표시
+                    dialogManager.showEditDialog(
+                        gratitudeItem = item,
+                        onSave = { updatedItem ->
+                            viewModel.deleteGratitude(updatedItem)
+                        },
+                        onDelete = { itemToDelete ->
+                            viewModel.deleteGratitude(itemToDelete)
+                        }
+                    )
+                }
                 Scaffold(
                     topBar = {
                         if (isSearchActive) {
@@ -128,15 +144,17 @@ class MainActivity : ComponentActivity() {
                                 )
 
                                 // Composable 함수 내에서 조건부로 다이얼로그 표시
-                                if (showDialog && selectedItem != null) {
-                                    dialogManager.EditDialog(
-                                        onDismiss = {
-                                            showDialog = false
-                                            selectedItem = null
-                                        },
-                                        item = selectedItem!!,
-                                        viewModel = viewModel
-                                    )
+                                when (val dialog = currentDialog) {
+                                    is DialogManager.DialogType.EditDialog -> {
+                                        EditDialogContent(
+                                            gratitudeItem = dialog.gratitudeItem,
+                                            onSave = dialog.onSave,
+                                            onDelete = dialog.onDelete,
+                                            onDismiss = dialog.onDismiss
+                                        )
+                                    }
+                                    // 다른 다이얼로그 타입 처리...
+                                    else -> { /* 표시할 다이얼로그 없음 */ }
                                 }
                             }
 

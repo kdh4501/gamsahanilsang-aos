@@ -26,7 +26,7 @@ interface GratitudeDao {
     suspend fun deleteAll()
 
     @Query("SELECT * FROM gratitude_items WHERE gratitudeText LIKE '%' || :query || '%' ORDER BY date DESC")
-    fun searchGratitudes(query: String): List<GratitudeItem>
+    suspend fun searchGratitudes(query: String): List<GratitudeItem>
 
     @Query("""
         SELECT * FROM gratitude_items
@@ -38,7 +38,7 @@ interface GratitudeDao {
         CASE WHEN :sortOrder = 'date ASC' THEN date END ASC,
         CASE WHEN :sortOrder = 'gratitudeText ASC' THEN gratitudeText END ASC
     """)
-    fun getFilterGratitudeItems(
+    suspend fun getFilterGratitudeItems(
         startDate: String?,
         endDate: String?,
         keyword: String?,

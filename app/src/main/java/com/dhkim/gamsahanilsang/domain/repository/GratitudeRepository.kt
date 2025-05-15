@@ -12,5 +12,5 @@ interface GratitudeRepository {
     suspend fun deleteAllGratitude()
     suspend fun searchGratitudes(searchQuery: String): List<GratitudeItem>
     // 필터링된 감사 항목을 가져오는 메서드 추가
-    fun getFilteredGratitudeItems(filter: GratitudeFilter): Flow<List<GratitudeItem>>
+    suspend fun getFilteredGratitudeItems(filter: GratitudeFilter): Flow<List<GratitudeItem>>
 }

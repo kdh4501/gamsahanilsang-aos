@@ -40,7 +40,7 @@ class RoomGratitudeRepository(private val gratitudeDao: GratitudeDao) : Gratitud
         }
     }
 
-    override fun getFilteredGratitudeItems(filter: GratitudeFilter): Flow<List<GratitudeItem>> {
+    override suspend fun getFilteredGratitudeItems(filter: GratitudeFilter): Flow<List<GratitudeItem>> {
         return gratitudeDao.getFilterGratitudeItems(
             startDate = filter.dateRange?.startDate?.toString(),
             endDate = filter.dateRange?.endDate?.toString(),

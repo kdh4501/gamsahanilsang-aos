@@ -1,5 +1,6 @@
 package com.dhkim.gamsahanilsang.presentation.gratitude.components
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -57,7 +58,7 @@ fun GratitudeList(
         filterState != GratitudeFilter() -> groupedFilteredResults
         else -> groupedItems
     }
-
+    Log.d("FilterDebug", "표시할 데이터: ${displayData.size}개 그룹, ${displayData.values.sumOf { it.size }}개 항목")
     if (uiState.isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -106,6 +107,26 @@ fun GratitudeList(
         }
     } else {
         LazyColumn {
+            // 그룹화된 데이터 표시
+            displayData.forEach { (date, items) ->
+                item {
+                    Text(
+                        text = formatDateHeader(date),
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+                    )
+                    Log.d("FilterDebug", "표시 중: 날짜 ${date}에 ${items.size}개 항목")
+                }
+
+                items(items) { item ->
+                    Log.d("FilterDebug", "항목 표시: ${item.date} - ${item.gratitudeText.take(20)}...")
+                    GratitudeListItem(
+                        item = item,
+                        onClick = { onItemClick(item) },
+                        onEditClick = onEditClick
+                    )
+                }
+            }
             // 검색 모드일 때 검색 결과 헤더 표시
             if (isSearchMode && searchQuery.isNotEmpty()) {
                 item {

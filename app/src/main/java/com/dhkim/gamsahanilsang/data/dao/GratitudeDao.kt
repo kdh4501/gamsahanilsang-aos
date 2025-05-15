@@ -44,10 +44,50 @@ interface GratitudeDao {
             ELSE 0
         END ASC
     """)
-    suspend fun getFilterGratitudeItems(
+    fun getFilterGratitudeItems(
         startDate: String?,
         endDate: String?,
         keyword: String?,
         sortOrder: String
     ): Flow<List<GratitudeItem>>
+
+    @Query("""
+        SELECT * FROM gratitude_items
+        WHERE (:startDate = '0000-01-01' OR date >= :startDate)
+        AND (:endDate = '9999-12-31' OR date <= :endDate)
+        AND (:keyword IS NULL OR :keyword = '' OR gratitudeText LIKE '%' || :keyword || '%')
+        ORDER BY date DESC
+    """)
+    fun getFilterGratitudeItemsNewest(
+        startDate: String,
+        endDate: String,
+        keyword: String?
+    ): Flow<List<GratitudeItem>>
+
+    @Query("""
+        SELECT * FROM gratitude_items
+        WHERE (:startDate = '0000-01-01' OR date >= :startDate)
+        AND (:endDate = '9999-12-31' OR date <= :endDate)
+        AND (:keyword IS NULL OR :keyword = '' OR gratitudeText LIKE '%' || :keyword || '%')
+        ORDER BY date ASC
+    """)
+    fun getFilterGratitudeItemsOldest(
+        startDate: String,
+        endDate: String,
+        keyword: String?
+    ): Flow<List<GratitudeItem>>
+
+    @Query("""
+        SELECT * FROM gratitude_items
+        WHERE (:startDate = '0000-01-01' OR date >= :startDate)
+        AND (:endDate = '9999-12-31' OR date <= :endDate)
+        AND (:keyword IS NULL OR :keyword = '' OR gratitudeText LIKE '%' || :keyword || '%')
+        ORDER BY gratitudeText COLLATE NOCASE ASC
+    """)
+    fun getFilterGratitudeItemsAlphabetical(
+        startDate: String,
+        endDate: String,
+        keyword: String?
+    ): Flow<List<GratitudeItem>>
+
 }

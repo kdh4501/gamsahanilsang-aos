@@ -105,7 +105,15 @@ class MainViewModel @Inject constructor(
 
     // 필터 초기화
     fun resetFilter() {
-        _filterState.value = GratitudeFilter()
+        // 최소/최대 날짜로 날짜 범위 설정
+        val minDate = LocalDate.of(2000, 1, 1)
+        val maxDate = LocalDate.of(2099, 12, 31)
+
+        _filterState.value = GratitudeFilter(
+            dateRange = DateRange(minDate, maxDate),
+            keyword = null,
+            sortOrder = SortOrder.NEWEST_FIRST
+        )
         applyFilter()
     }
 

@@ -1,5 +1,6 @@
 package com.dhkim.gamsahanilsang.data.repository
 
+import android.util.Log
 import com.dhkim.gamsahanilsang.data.dao.GratitudeDao
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.model.GratitudeFilter
@@ -44,23 +45,25 @@ class RoomGratitudeRepository(private val gratitudeDao: GratitudeDao) : Gratitud
     override suspend fun getFilteredGratitudeItems(filter: GratitudeFilter): Flow<List<GratitudeItem>> {
 
         // 필터 파라미터 변환
-        val startDate = filter.dateRange?.startDate?.format(DateTimeFormatter.ISO_LOCAL_DATE)
-        val endDate = filter.dateRange?.endDate?.format(DateTimeFormatter.ISO_LOCAL_DATE)
+        // 날짜 범위가 NULL이면 최소/최대 날짜로 설정
+        val startDate = filter.dateRange?.startDate?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "0000-01-01"
+        val endDate = filter.dateRange?.endDate?.format(DateTimeFormatter.ISO_LOCAL_DATE) ?: "9999-12-31"
         val keyword = filter.keyword
 
-        // 정렬 순서 문자열로 변환
-        val sortOrderString = when (filter.sortOrder) {
-            SortOrder.NEWEST_FIRST -> "NEWEST_FIRST"
-            SortOrder.OLDEST_FIRST -> "OLDEST_FIRST"
-            SortOrder.ALPHABETICAL -> "ALPHABETICAL"
+        return when (filter.sortOrder) {
+            SortOrder.NEWEST_FIRST -> {
+                Log.d("FilterDebug", "Repository - 최신순 정렬 적용")
+                gratitudeDao.getFilterGratitudeItemsNewest(startDate, endDate, keyword)
+            }
+            SortOrder.OLDEST_FIRST -> {
+                Log.d("FilterDebug", "Repository - 오래된순 정렬 적용")
+                gratitudeDao.getFilterGratitudeItemsOldest(startDate, endDate, keyword)
+            }
+            SortOrder.ALPHABETICAL -> {
+                Log.d("FilterDebug", "Repository - 알파벳순 정렬 적용")
+                gratitudeDao.getFilterGratitudeItemsAlphabetical(startDate, endDate, keyword)
+            }
         }
-
-        return gratitudeDao.getFilterGratitudeItems(
-            startDate = startDate,
-            endDate = endDate,
-            keyword = keyword,
-            sortOrder = sortOrderString
-        )
     }
 
 

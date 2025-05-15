@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
+import com.dhkim.gamsahanilsang.domain.model.GratitudeFilter
 import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModel
 import com.dhkim.gamsahanilsang.utils.DateUtils
 
@@ -35,6 +36,10 @@ fun GratitudeList(
 ) {
     val groupedItems by viewModel.groupedGratitudes.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
+    val filterState by viewModel.filterState.collectAsState()
+
+    // 필터링된 결과 수집 추가
+    val filteredGratitudes by viewModel.filteredGratitudes.collectAsState()
 
     // 검색 결과 데이터
     val searchResults by viewModel.searchResults.collectAsState()
@@ -43,8 +48,15 @@ fun GratitudeList(
     // 검색 결과를 날짜별로 그룹화
     val groupedSearchResults = searchResults.groupBy { it.date }
 
-    // 검색 모드에 따라 표시할 데이터 결정
-    val displayData = if (isSearchMode) groupedSearchResults else groupedItems
+    // 필터링된 결과를 날짜별로 그룹화
+    val groupedFilteredResults = filteredGratitudes.groupBy { it.date }
+
+    // 표시할 데이터 결정 (검색 모드, 필터 모드, 일반 모드)
+    val displayData = when {
+        isSearchMode -> groupedSearchResults
+        filterState != GratitudeFilter() -> groupedFilteredResults
+        else -> groupedItems
+    }
 
     if (uiState.isLoading) {
         Box(
@@ -68,6 +80,18 @@ fun GratitudeList(
                 textAlign = TextAlign.Center
             )
         }
+    } else if (!isSearchMode && filterState != GratitudeFilter() && filteredGratitudes.isEmpty()) {
+        // 필터링 결과가 없는 경우
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "필터 조건에 맞는 결과가 없습니다.",
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center
+            )
+        }
     } else if (displayData.isEmpty()) {
         // 데이터가 없는 경우
         Box(
@@ -87,6 +111,16 @@ fun GratitudeList(
                 item {
                     Text(
                         text = "\"$searchQuery\"에 대한 검색 결과",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+                }
+            }
+            // 필터 모드일 때 필터 결과 헤더 표시
+            else if (filterState != GratitudeFilter()) {
+                item {
+                    Text(
+                        text = "필터링된 결과",
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(bottom = 16.dp)
                     )

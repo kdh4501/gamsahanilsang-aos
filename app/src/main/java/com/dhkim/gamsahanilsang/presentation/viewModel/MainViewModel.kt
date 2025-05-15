@@ -1,5 +1,6 @@
 package com.dhkim.gamsahanilsang.presentation.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
@@ -65,6 +66,7 @@ class MainViewModel @Inject constructor(
 
     // 필터 상태 업데이트
     fun updateFilter(filter: GratitudeFilter) {
+        Log.d("FilterDebug", "필터 업데이트: $filter")
         _filterState.value = filter
         applyFilter()
     }
@@ -95,9 +97,11 @@ class MainViewModel @Inject constructor(
 
     // 필터 적용
     private fun applyFilter() {
+        Log.d("FilterDebug", "필터 적용 시작")
         viewModelScope.launch {
             gratitudeUseCase.getFilteredGratitudeItems(_filterState.value)
                 .collect { items ->
+                    Log.d("FilterDebug", "필터링 결과: ${items.size}개 항목")
                     _filteredGratitudes.value = items
                 }
         }

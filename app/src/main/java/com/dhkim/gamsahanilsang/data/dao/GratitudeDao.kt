@@ -34,9 +34,15 @@ interface GratitudeDao {
         AND (:endDate IS NULL OR date <= :endDate)
         AND (:keyword IS NULL OR gratitudeText LIKE '%' || :keyword || '%')
         ORDER BY
-        CASE WHEN :sortOrder = 'date DESC' THEN date END DESC,
-        CASE WHEN :sortOrder = 'date ASC' THEN date END ASC,
-        CASE WHEN :sortOrder = 'gratitudeText ASC' THEN gratitudeText END ASC
+        CASE :sortOrder
+            WHEN 'NEWEST_FIRST' THEN date
+            WHEN 'OLDEST_FIRST' THEN date
+            ELSE gratitudeText
+        END DESC,
+        CASE :sortOrder
+            WHEN 'OLDEST_FIRST' THEN 1
+            ELSE 0
+        END ASC
     """)
     suspend fun getFilterGratitudeItems(
         startDate: String?,

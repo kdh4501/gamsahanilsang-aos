@@ -1,5 +1,6 @@
 package com.dhkim.gamsahanilsang.data.repository
 
+import android.util.Log
 import com.dhkim.gamsahanilsang.data.dao.GratitudeDao
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.model.GratitudeFilter
@@ -8,6 +9,7 @@ import com.dhkim.gamsahanilsang.domain.repository.GratitudeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import java.time.format.DateTimeFormatter
 
 class RoomGratitudeRepository(private val gratitudeDao: GratitudeDao) : GratitudeRepository {
     override suspend fun saveGratitude(item: GratitudeItem) {
@@ -41,15 +43,27 @@ class RoomGratitudeRepository(private val gratitudeDao: GratitudeDao) : Gratitud
     }
 
     override suspend fun getFilteredGratitudeItems(filter: GratitudeFilter): Flow<List<GratitudeItem>> {
+        Log.d("FilterDebug", "Repository - 필터: $filter")
+
+        // 필터 파라미터 변환
+        val startDate = filter.dateRange?.startDate?.format(DateTimeFormatter.ISO_LOCAL_DATE)
+        val endDate = filter.dateRange?.endDate?.format(DateTimeFormatter.ISO_LOCAL_DATE)
+        val keyword = filter.keyword
+
+        // 정렬 순서 문자열로 변환
+        val sortOrderString = when (filter.sortOrder) {
+            SortOrder.NEWEST_FIRST -> "NEWEST_FIRST"
+            SortOrder.OLDEST_FIRST -> "OLDEST_FIRST"
+            SortOrder.ALPHABETICAL -> "ALPHABETICAL"
+        }
+
+        Log.d("FilterDebug", "Repository - 변환된 파라미터: startDate=$startDate, endDate=$endDate, keyword=$keyword, sortOrder=$sortOrderString")
+
         return gratitudeDao.getFilterGratitudeItems(
-            startDate = filter.dateRange?.startDate?.toString(),
-            endDate = filter.dateRange?.endDate?.toString(),
-            keyword = filter.keyword,
-            sortOrder = when (filter.sortOrder) {
-                SortOrder.NEWEST_FIRST -> "date DESC"
-                SortOrder.OLDEST_FIRST -> "date ASC"
-                SortOrder.ALPHABETICAL -> "gratitudeText ASC"
-            }
+            startDate = startDate,
+            endDate = endDate,
+            keyword = keyword,
+            sortOrder = sortOrderString
         )
     }
 

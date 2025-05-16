@@ -107,26 +107,6 @@ fun GratitudeList(
         }
     } else {
         LazyColumn {
-            // 그룹화된 데이터 표시
-            displayData.forEach { (date, items) ->
-                item {
-                    Text(
-                        text = formatDateHeader(date),
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-                    )
-                    Log.d("FilterDebug", "표시 중: 날짜 ${date}에 ${items.size}개 항목")
-                }
-
-                items(items) { item ->
-                    Log.d("FilterDebug", "항목 표시: ${item.date} - ${item.gratitudeText.take(20)}...")
-                    GratitudeListItem(
-                        item = item,
-                        onClick = { onItemClick(item) },
-                        onEditClick = onEditClick
-                    )
-                }
-            }
             // 검색 모드일 때 검색 결과 헤더 표시
             if (isSearchMode && searchQuery.isNotEmpty()) {
                 item {
@@ -141,6 +121,7 @@ fun GratitudeList(
             else if (filterState != GratitudeFilter()) {
                 item {
                     Text(
+
                         text = "필터링된 결과",
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(bottom = 16.dp)
@@ -148,15 +129,19 @@ fun GratitudeList(
                 }
             }
 
-            groupedItems.forEach { (date, gratitudeItems) ->
+            // 그룹화된 데이터 표시
+            displayData.forEach { (date, items) ->
                 item {
                     Text(
                         text = formatDateHeader(date),
                         style = MaterialTheme.typography.titleMedium,
                         modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
                     )
+                    Log.d("FilterDebug", "표시 중: 날짜 ${date}에 ${items.size}개 항목")
                 }
-                items(gratitudeItems) { item ->
+
+                items(items) { item ->
+                    Log.d("FilterDebug", "항목 표시: ${item.date} - ${item.gratitudeText.take(20)}...")
                     GratitudeListItem(
                         item = item,
                         onClick = { onItemClick(item) },

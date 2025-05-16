@@ -222,7 +222,16 @@ fun FilterDialogContent(
                         Spacer(modifier = Modifier.width(8.dp))
 
                         Button(
-                            onClick = { onFilterApplied(filter) },
+                            onClick = {
+                                // 날짜 범위가 없으면 기본 범위 설정
+                                val finalFilter = if (filter.dateRange == null) {
+                                    val minDate = LocalDate.of(2000, 1, 1)
+                                    val maxDate = LocalDate.of(2099, 12, 31)
+                                    filter.copy(dateRange = DateRange(minDate, maxDate))
+                                } else {
+                                    filter
+                                }
+                                onFilterApplied(finalFilter) },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.primary
                             )

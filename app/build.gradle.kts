@@ -6,6 +6,7 @@ plugins {
     kotlin("plugin.serialization") version "2.0.21"
     id("com.google.dagger.hilt.android")
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -19,7 +20,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runㅍner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -104,6 +105,9 @@ dependencies {
 
     val work_version = "2.10.1"
     implementation("androidx.work:work-runtime-ktx:$work_version")
+
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
+    implementation("com.google.firebase:firebase-analytics")
 }
 java {
     toolchain {

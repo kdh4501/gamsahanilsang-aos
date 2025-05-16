@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "411950949641",
+    "project_id": "gamsahanilsang",
+    "storage_bucket": "gamsahanilsang.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:411950949641:android:0b6598300fbefd19a99fd8",
+        "android_client_info": {
+          "package_name": "com.dhkim.gamsahanilsang"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNymmUYezraLGGG-0ALnlH9ptYr1HJiqo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

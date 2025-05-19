@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Backup
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +50,28 @@ fun SettingsScreen() {
         Divider(modifier = Modifier.padding(vertical = 8.dp))
 
         // 기타 설정 항목들...
+        // 데이터 관리 섹션 추가
+        Text(
+            text = "데이터 관리",
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+
+        // 백업 및 복원 항목
+        SettingsItem(
+            title = "백업 및 복원",
+            subtitle = "감사 기록을 클라우드에 백업하고 복원하세요",
+            icon = Icons.Default.Backup, // 적절한 아이콘 사용
+            onClick = { /* 백업 및 복원 처리 */ }
+        )
+
+        // 데이터 내보내기
+        SettingsItem(
+            title = "데이터 내보내기",
+            subtitle = "감사 기록을 CSV 또는 PDF로 내보내기",
+            icon = Icons.Default.Download, // 적절한 아이콘 사용
+            onClick = { /* 내보내기 처리 */ }
+        )
     }
 }
 

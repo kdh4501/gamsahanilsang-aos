@@ -108,6 +108,10 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
     implementation("com.google.firebase:firebase-analytics")
+    // Firebase Auth 의존성 추가 (정확한 import 경로)
+    implementation("com.google.firebase:firebase-auth-ktx")
+    // Google Play Services Auth 추가 (구글 로그인에 필요)
+    implementation("com.google.android.gms:play-services-auth:20.7.0")
 }
 java {
     toolchain {

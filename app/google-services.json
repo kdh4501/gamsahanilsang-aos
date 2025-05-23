@@ -12,7 +12,20 @@
           "package_name": "com.dhkim.gamsahanilsang"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "411950949641-7hheqv3hgo4h94adffqerb64k9jmun6p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dhkim.gamsahanilsang",
+            "certificate_hash": "3828be6dff25c6efbdc7db395a936a6d90ce67d5"
+          }
+        },
+        {
+          "client_id": "411950949641-ibu05nq1ee89re34p7mv6s6k40m3sl4g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCNymmUYezraLGGG-0ALnlH9ptYr1HJiqo"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "411950949641-ibu05nq1ee89re34p7mv6s6k40m3sl4g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

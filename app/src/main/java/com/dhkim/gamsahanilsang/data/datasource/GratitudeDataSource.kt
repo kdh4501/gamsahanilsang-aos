@@ -85,4 +85,16 @@ class FirestoreGratitudeDataSource : GratitudeDataSource {
     } catch (e: Exception) {
         Result.failure(e)
     }
+
+    // TODO: 마이그레이션 시 로컬 데이터를 Firestore에 벌크로 추가하는 함수 추가 고려
+    suspend fun addEntriesBulk(entries: List<GratitudeEntry>): Result<Unit> = try {
+        val batch = firestore.batch()
+        entries.forEach { entry ->
+            // 새로운 문서 참조 생성 (ID 자동 생성)
+            val docRef = firestore.collection(collectionName).document()
+            batch.set(docRef, entry)
+        }
+        batch.commit().await()
+        Result.success(Unit)
+    } catch (e: Exception) { Result.failure(e) }
 }

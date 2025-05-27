@@ -1,5 +1,6 @@
 package com.dhkim.gamsahanilsang.presentation.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dhkim.gamsahanilsang.domain.model.GratitudeEntry
@@ -122,6 +123,41 @@ class GratitudeListViewModel(
         }
     }
 
+    // 👇 👇 👇 감사 기록 업데이트 함수 추가 👇 👇 👇
+    /**
+     * 감사 기록을 업데이트하는 함수입니다.
+     * @param updatedEntry 업데이트할 GratitudeEntry 객체 (ID 포함)
+     */
+    fun updateGratitudeEntry(updatedEntry: GratitudeEntry) {
+        val userId = auth.currentUser?.uid ?: run {
+            _uiState.value = _uiState.value.copy(error = "로그인 상태를 확인해주세요.")
+            return
+        }
+
+        // 업데이트할 기록에 현재 사용자의 UID가 제대로 설정되어 있는지 확인
+        if (updatedEntry.userId.isEmpty() || updatedEntry.userId != userId) {
+            Log.e("GratitudeVM", "업데이트 요청된 기록의 사용자 ID가 일치하지 않거나 비어있습니다.")
+            _uiState.value = _uiState.value.copy(error = "유효하지 않은 기록 업데이트 요청입니다.")
+            return
+        }
+
+        viewModelScope.launch {
+            // TODO: (옵션) 업데이트 중 로딩 상태나 UI 피드백 표시 로직 추가
+
+            // Repository에 기록 업데이트 요청
+            val result = gratitudeRepository.updateGratitudeEntry(userId, updatedEntry)
+
+            // 결과 처리
+            result.onSuccess {
+                Log.d("GratitudeVM", "기록 업데이트 성공: ${updatedEntry.id}")
+            }.onFailure { e ->
+                // 실패 시 에러 메시지 처리 (예: 토스트 메시지 표시)
+                _uiState.value = _uiState.value.copy(error = "기록 업데이트 실패: ${e.message}")
+                Log.e("GratitudeVM", "기록 업데이트 실패", e)
+            }
+            // 성공 시 UI 상태는 loadGratitudeEntries의 Flow에서 자동으로 업데이트됩니다.
+        }
+    }
     // TODO: 감사 기록 수정, 검색, 필터링 등의 함수 추가
     // TODO: 네비게이션 이벤트 (예: 기록 클릭 시 상세 화면으로 이동) 처리 로직 추가
 }

@@ -6,7 +6,8 @@ import com.dhkim.gamsahanilsang.utils.DateUtils
 
 @Entity(tableName = "gratitude_items")
 data class GratitudeItem(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
     val gratitudeText: String,
     val date: String = DateUtils.getTodayDate()
 )

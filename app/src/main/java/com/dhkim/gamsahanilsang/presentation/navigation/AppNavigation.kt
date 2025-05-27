@@ -15,20 +15,33 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.dhkim.gamsahanilsang.data.datasource.FirestoreGratitudeDataSource
+import com.dhkim.gamsahanilsang.data.datasource.GratitudeDataSource
+import com.dhkim.gamsahanilsang.data.repository.GratitudeRepositoryImpl
+import com.dhkim.gamsahanilsang.domain.repository.RemoteGratitudeRepository
+import com.dhkim.gamsahanilsang.presentation.screen.main.MainScreen
+import com.dhkim.gamsahanilsang.presentation.screen.settings.SettingsScreen
 import com.dhkim.gamsahanilsang.presentation.viewModel.AuthState
 import com.dhkim.gamsahanilsang.presentation.viewModel.AuthViewModel
+import com.dhkim.gamsahanilsang.presentation.viewModel.GratitudeListViewModel
 
 // 네비게이션 경로 정의 (상수로 관리)
 object AppDestinations {
     const val LOADING_ROUTE = "loading"
     const val LOGIN_ROUTE = "login"
     const val MAIN_ROUTE = "main"
-    // TODO: 다른 화면 경로 추가 (예: settings, detail 등)
+    const val SETTINGS_ROUTE = "settings"
 }
 
 @Composable
 fun AppNavigation(
-    authViewModel: AuthViewModel = viewModel() // AuthViewModel 주입
+    authViewModel: AuthViewModel = viewModel(), // AuthViewModel 주입
+    gratitudeListViewModel: GratitudeListViewModel = viewModel {
+        val dataSource: GratitudeDataSource = FirestoreGratitudeDataSource()
+        val repository: RemoteGratitudeRepository = GratitudeRepositoryImpl(dataSource)
+        GratitudeListViewModel(repository)
+    }
+
 ) {
     val navController = rememberNavController() // NavController 생성
     val authState by authViewModel.authState.collectAsState() // 로그인 상태 관찰
@@ -86,12 +99,19 @@ fun AppNavigation(
 
         // 메인 화면 (감사 기록 목록 등)
         composable(AppDestinations.MAIN_ROUTE) {
-            // TODO: 메인 화면 Composable 구현 및 연결
-            Text("메인 화면 - 로그인 성공!") // 임시 UI
-            // 예시: GratitudeListScreen(navController = navController)
+            MainScreen(
+                navController = navController,
+                viewModel = gratitudeListViewModel
+            )
         }
 
         // TODO: 설정 화면 등 다른 화면들도 Composable로 정의하고 네비게이션 연결
-        // composable(AppDestinations.SETTINGS_ROUTE) { SettingsScreen(navController = navController) }
+        // 👇 👇 👇 SettingsScreen Composable 연결 👇 👇 👇
+        composable(AppDestinations.SETTINGS_ROUTE) {
+            SettingsScreen(
+                navController = navController, // NavController 전달
+                authViewModel = authViewModel // AuthViewModel 전달
+            )
+        }
     }
 }

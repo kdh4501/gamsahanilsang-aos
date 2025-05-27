@@ -4,7 +4,7 @@ import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.model.GratitudeFilter
 import kotlinx.coroutines.flow.Flow
 
-interface GratitudeRepository {
+interface LocalGratitudeRepository {
     suspend fun saveGratitude(item: GratitudeItem)
     suspend fun getAllGratitudes(): List<GratitudeItem>
     suspend fun update(item: GratitudeItem)

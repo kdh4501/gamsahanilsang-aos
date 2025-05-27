@@ -4,7 +4,7 @@ import android.content.Context
 import com.dhkim.gamsahanilsang.data.dao.GratitudeDao
 import com.dhkim.gamsahanilsang.data.database.AppDatabase
 import com.dhkim.gamsahanilsang.data.repository.RoomGratitudeRepository
-import com.dhkim.gamsahanilsang.domain.repository.GratitudeRepository
+import com.dhkim.gamsahanilsang.domain.repository.LocalGratitudeRepository
 import com.dhkim.gamsahanilsang.domain.usecase.GratitudeUseCase
 import com.dhkim.gamsahanilsang.presentation.common.DialogManager
 import dagger.Module
@@ -31,12 +31,12 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideGratitudeRepository(gratitudeDao: GratitudeDao): GratitudeRepository {
+    fun provideGratitudeRepository(gratitudeDao: GratitudeDao): LocalGratitudeRepository {
         return RoomGratitudeRepository(gratitudeDao)
     }
 
     @Provides
-    fun provideGratitudeUseCase(repository: GratitudeRepository): GratitudeUseCase {
+    fun provideGratitudeUseCase(repository: LocalGratitudeRepository): GratitudeUseCase {
         return GratitudeUseCase(repository)
     }
 

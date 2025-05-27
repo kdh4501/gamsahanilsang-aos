@@ -5,13 +5,13 @@ import com.dhkim.gamsahanilsang.data.dao.GratitudeDao
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.model.GratitudeFilter
 import com.dhkim.gamsahanilsang.domain.model.SortOrder
-import com.dhkim.gamsahanilsang.domain.repository.GratitudeRepository
+import com.dhkim.gamsahanilsang.domain.repository.LocalGratitudeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import java.time.format.DateTimeFormatter
 
-class RoomGratitudeRepository(private val gratitudeDao: GratitudeDao) : GratitudeRepository {
+class RoomGratitudeRepository(private val gratitudeDao: GratitudeDao) : LocalGratitudeRepository {
     override suspend fun saveGratitude(item: GratitudeItem) {
         withContext(Dispatchers.IO) {
             gratitudeDao.insert(item)

@@ -14,12 +14,14 @@ import androidx.core.content.ContextCompat
 import com.dhkim.gamsahanilsang.presentation.navigation.AppNavigation
 import com.dhkim.gamsahanilsang.presentation.notification.NotificationScheduler
 import com.dhkim.gamsahanilsang.presentation.ui.theme.MyTheme
+import com.dhkim.gamsahanilsang.presentation.viewModel.AuthViewModel
 import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
+    private val authViewModel: AuthViewModel by viewModels()
     private lateinit var notificationScheduler: NotificationScheduler
     @OptIn(ExperimentalMaterial3Api::class)
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
@@ -46,13 +48,23 @@ class MainActivity : ComponentActivity() {
         // ⭐️ 결과를 Toast로 띄우기
         Toast.makeText(this, "🔥 테스트 Streak 결과: ${streak}일", Toast.LENGTH_LONG).show()
         */
+        lifecycle.addObserver(authViewModel)
         notificationScheduler = NotificationScheduler(applicationContext)
         checkAndRequestNotificationPermission()
+
         setContent {
             MyTheme {
-                AppNavigation()
+                AppNavigation(authViewModel = authViewModel)
             }
         }
+    }
+
+    // Activity가 종료될 때 ViewModel의 onCleared가 호출됩니다.
+    override fun onDestroy() {
+        super.onDestroy()
+        // onCleared()에서 리스너 제거 로직이 있으므로 여기서 별도 제거는 필수는 아닐 수 있습니다.
+        // 하지만 명확하게 제거하려면 여기서 removeObserver(authViewModel) 호출 가능
+        lifecycle.removeObserver(authViewModel) // ViewModel 생명주기보다 먼저 종료될 때 안전하게 제거
     }
 
 //    private fun sendTestNotification() {

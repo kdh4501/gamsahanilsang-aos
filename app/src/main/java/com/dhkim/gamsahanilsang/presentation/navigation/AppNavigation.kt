@@ -1,9 +1,11 @@
 package com.dhkim.gamsahanilsang.presentation.navigation
 
 import LoginScreen
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -61,6 +63,16 @@ fun AppNavigation(
                     launchSingleTop = true
                 }
             }
+            is AuthState.Error -> {
+                // 인증 과정 에러 발생
+                // 에러 화면으로 이동 또는 로그인 화면으로 이동 후 에러 메시지 표시
+                Log.e("AppNav", "AuthState ${authState}, navigating to LOGIN_ROUTE for error")
+                navController.navigate(AppDestinations.LOGIN_ROUTE) { // 에러 시 로그인 화면으로 보내고 에러 메시지 표시 (선택 사항)
+                    popUpTo(AppDestinations.LOADING_ROUTE) { inclusive = true }
+                    launchSingleTop = true
+                }
+                // TODO: 에러 메시지를 사용자에게 보여주는 로직 추가 (ViewModel 상태 또는 별도 UI)
+            }
             // Initial, Loading, Error 상태는 LaunchedEffect 밖에서 NavHost의 startDestination으로 처리
             else -> { /* Initial, Loading, Error 상태는 startDestination에서 처리됨 */ }
         }
@@ -79,8 +91,13 @@ fun AppNavigation(
         // 로딩 화면 (선택 사항)
         composable(AppDestinations.LOADING_ROUTE) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-                Text("로그인 상태 확인 중...")
+                // TODO: 로딩 상태에 따른 메시지 표시 (AuthViewModel의 authState 관찰)
+                when (authState) {
+                    AuthState.Initial -> Text("앱 초기화 중...")
+                    AuthState.Loading -> CircularProgressIndicator() // 로딩 스피너
+                    is AuthState.Error -> Text("오류 발생: ${(authState as AuthState.Error).message}", color = MaterialTheme.colorScheme.error) // 에러 메시지 표시
+                    else -> Text("상태 확인 완료. 이동 중...") // 최종 상태가 되었으나 아직 네비게이션 중일 때
+                }
             }
         }
 

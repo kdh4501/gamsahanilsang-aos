@@ -93,7 +93,7 @@ fun LoginScreen(
             onClick = {
                 // 구글 로그인 옵션 설정
                 val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(context.getString(R.string.search)) // 수정해야함
+                    .requestIdToken(context.getString(R.string.default_web_client_id)) // 수정해야함
                     .requestEmail()
                     .build()
 

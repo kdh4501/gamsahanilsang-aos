@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -27,6 +29,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,6 +42,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.dhkim.gamsahanilsang.domain.model.GratitudeEntry
@@ -286,27 +290,51 @@ fun EditGratitudeDialog(
     onDelete: (GratitudeEntry) -> Unit,
     onDismiss: () -> Unit
 ) {
+    // 편집 가능한 내용 상태 관리 (초기값은 전달받은 entry의 content)
+    var editedContent by remember { mutableStateOf(entry.content) }
+    // 저장 버튼 활성화 조건: 내용이 비어있지 않고, 기존 내용과 다르거나 제목이 변경되었을 때
+    // 현재는 내용만 편집 가능하다고 가정하고, 내용이 비어있지 않고 기존 내용과 다르면 활성화
+    val isSaveEnabled = editedContent.isNotBlank() && editedContent.trim() != entry.content.trim()
+
     // TODO: 실제 편집 가능한 UI (TextField 등) 구현 필요
     // 현재는 데이터 표시 및 버튼만 있습니다.
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("기록 상세/편집") },
         text = {
-            Column {
-                Text("ID: ${entry.id}")
-                Text("사용자 ID: ${entry.userId}")
-                Text("내용: ${entry.content}")
-                // TODO: 편집 TextField 추가 및 상태 관리
-                // var editedContent by remember { mutableStateOf(entry.content) }
-                // TextField(value = editedContent, onValueChange = { editedContent = it })
+            Column(
+                modifier = Modifier.padding(top = 8.dp).fillMaxWidth()  // 상단 패딩 + 가로로 채우기
+            ) {
+                // 감사 기록 내용 편집 필드
+                OutlinedTextField(
+                    value = editedContent,
+                    onValueChange = { editedContent = it }, // 입력 내용 업데이트
+                    label = { Text("내용") }, // 라벨
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(150.dp), // 높이 지정 (스크롤 가능하도록)
+                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences) // 첫 글자 대문자 자동 전환
+                    // TODO: maxLines 설정 등 필요시 추가
+                )
+
+                // 작성 날짜 표시 (편집 불가)
+                Text(
+                    text = "작성일: ${SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault()).format(entry.timestamp)}",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
             }
         },
         confirmButton = {
             // TODO: 편집된 내용을 반영하여 updatedEntry 생성 후 onSave 호출
             Button(onClick = {
                 // 임시: 변경 없이 onSave 호출 (실제 편집 로직 추가 필요)
-                // val updatedEntry = entry.copy(content = editedContent) // 예시
-                onSave(entry) // 임시로 원본 객체 전달
+                val updatedEntry = entry.copy(
+                    // TODO: 제목 필드 추가시 editedTitle.trim()
+                    content = editedContent.trim() // 편집된 내용으로 업데이트
+                )
+                onSave(updatedEntry) // 편집된 객체를 콜백으로 반환
             }) {
                 Text("저장")
             }

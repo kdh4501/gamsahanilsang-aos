@@ -1,4 +1,4 @@
-package com.dhkim.gamsahanilsang.presentation.screen.settings
+package com.dhkim.gamsahanilsang.presentation.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

@@ -1,4 +1,4 @@
-package com.dhkim.gamsahanilsang.presentation.screen.main
+package com.dhkim.gamsahanilsang.presentation.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -85,7 +85,7 @@ fun MainScreen(
             // 새 기록 추가 버튼
             FloatingActionButton(onClick = {
                 // TODO: 새 기록 추가 화면 이동
-                // navController.navigate(AppDestinations.ADD_GRATITUDE_ROUTE)
+//                navController.navigate(AppDestinations.ADD_GRATITUDE_ROUTE)
                 println("새 기록 추가 버튼 클릭! -> 추가 화면 이동 필요")
             }) {
                 Icon(Icons.Default.Add, contentDescription = "새 기록 추가")

@@ -21,8 +21,8 @@ import com.dhkim.gamsahanilsang.data.datasource.FirestoreGratitudeDataSource
 import com.dhkim.gamsahanilsang.data.datasource.GratitudeDataSource
 import com.dhkim.gamsahanilsang.data.repository.GratitudeRepositoryImpl
 import com.dhkim.gamsahanilsang.domain.repository.RemoteGratitudeRepository
-import com.dhkim.gamsahanilsang.presentation.screen.main.MainScreen
-import com.dhkim.gamsahanilsang.presentation.screen.settings.SettingsScreen
+import com.dhkim.gamsahanilsang.presentation.screen.MainScreen
+import com.dhkim.gamsahanilsang.presentation.screen.SettingsScreen
 import com.dhkim.gamsahanilsang.presentation.viewModel.AuthState
 import com.dhkim.gamsahanilsang.presentation.viewModel.AuthViewModel
 import com.dhkim.gamsahanilsang.presentation.viewModel.GratitudeListViewModel

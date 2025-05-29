@@ -69,7 +69,7 @@ fun SettingsScreen(
             onClick = { /* 로그인 처리 */ }
         )
 
-        // 👇 👇 👇 로그인 상태에 따라 다른 UI 표시 👇 👇 👇
+        // 로그인 상태에 따라 다른 UI 표시
         when (val state = authState) {
             is AuthState.Authenticated -> {
                 // 로그인된 상태: 사용자 정보와 로그아웃 버튼 표시
@@ -101,6 +101,7 @@ fun SettingsScreen(
             AuthState.Initial -> TODO()
             AuthState.Loading -> TODO()
             AuthState.Unauthenticated -> TODO()
+            is AuthState.Anonymous -> TODO()
         }
 
         Divider(modifier = Modifier.padding(vertical = 8.dp))

@@ -85,8 +85,7 @@ fun MainScreen(
             // 새 기록 추가 버튼
             FloatingActionButton(onClick = {
                 // TODO: 새 기록 추가 화면 이동
-//                navController.navigate(AppDestinations.ADD_GRATITUDE_ROUTE)
-                println("새 기록 추가 버튼 클릭! -> 추가 화면 이동 필요")
+                navController.navigate(AppDestinations.ADD_GRATITUDE_ROUTE)
             }) {
                 Icon(Icons.Default.Add, contentDescription = "새 기록 추가")
             }

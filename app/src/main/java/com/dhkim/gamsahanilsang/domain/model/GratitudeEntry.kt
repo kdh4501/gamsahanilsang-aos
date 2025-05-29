@@ -7,7 +7,7 @@ import java.util.Date
 data class GratitudeEntry(
     @DocumentId // Firestore 문서 ID를 이 필드에 매핑
     val id: String = "", // 각 기록의 고유 ID (Firestore 문서 ID)
-    val userId: String = "", // 이 기록을 작성한 사용자의 ID (Firebase Auth UID)
+    val userId: String ?= "", // 이 기록을 작성한 사용자의 ID (Firebase Auth UID)
     val title: String = "", // 감사 기록 제목 (옵션)
     val content: String = "", // 감사 기록 내용 (필수)
     @ServerTimestamp // Firestore 서버 시간을 기록 (생성 시간)

@@ -21,6 +21,7 @@ import com.dhkim.gamsahanilsang.data.datasource.FirestoreGratitudeDataSource
 import com.dhkim.gamsahanilsang.data.datasource.GratitudeDataSource
 import com.dhkim.gamsahanilsang.data.repository.GratitudeRepositoryImpl
 import com.dhkim.gamsahanilsang.domain.repository.RemoteGratitudeRepository
+import com.dhkim.gamsahanilsang.presentation.screen.AddGratitudeScreen
 import com.dhkim.gamsahanilsang.presentation.screen.MainScreen
 import com.dhkim.gamsahanilsang.presentation.screen.SettingsScreen
 import com.dhkim.gamsahanilsang.presentation.viewModel.AuthState
@@ -33,6 +34,7 @@ object AppDestinations {
     const val LOGIN_ROUTE = "login"
     const val MAIN_ROUTE = "main"
     const val SETTINGS_ROUTE = "settings"
+    const val ADD_GRATITUDE_ROUTE = "add_gratitude" // 새 기록 추가 화면 경로
 }
 
 @Composable
@@ -119,6 +121,22 @@ fun AppNavigation(
             MainScreen(
                 navController = navController,
                 viewModel = gratitudeListViewModel
+            )
+        }
+
+        // 새 기록 추가 화면 연결
+        composable(AppDestinations.ADD_GRATITUDE_ROUTE) {
+            AddGratitudeScreen(
+                navController = navController, // NavController 전달
+                viewModel = gratitudeListViewModel, // 필요시 ViewModel 전달 (위에서 viewModel()로 가져오고 있다면 필요 없음)
+                onEntryAdded = {
+                    // 기록 추가 완료 후 메인 화면으로 돌아가기
+                    navController.popBackStack()
+                },
+                onCancel = {
+                    // 취소 버튼 클릭 시 이전 화면으로 돌아가기
+                    navController.popBackStack()
+                }
             )
         }
 

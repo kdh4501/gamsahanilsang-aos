@@ -135,7 +135,7 @@ class GratitudeListViewModel(
         }
 
         // 업데이트할 기록에 현재 사용자의 UID가 제대로 설정되어 있는지 확인
-        if (updatedEntry.userId.isEmpty() || updatedEntry.userId != userId) {
+        if (updatedEntry.userId?.isEmpty() == true || updatedEntry.userId != userId) {
             Log.e("GratitudeVM", "업데이트 요청된 기록의 사용자 ID가 일치하지 않거나 비어있습니다.")
             _uiState.value = _uiState.value.copy(error = "유효하지 않은 기록 업데이트 요청입니다.")
             return

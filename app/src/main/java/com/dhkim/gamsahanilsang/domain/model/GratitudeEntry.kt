@@ -4,6 +4,7 @@ import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.ServerTimestamp
 import java.util.Date
 
+// Firestore DB 매핑용 모델
 data class GratitudeEntry(
     @DocumentId // Firestore 문서 ID를 이 필드에 매핑
     val id: String = "", // 각 기록의 고유 ID (Firestore 문서 ID)

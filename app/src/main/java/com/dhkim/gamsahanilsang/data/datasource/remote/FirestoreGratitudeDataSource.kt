@@ -9,6 +9,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import java.util.Date
 
 
 // Firestore 기반 감사 기록 데이터 소스 구현체
@@ -40,6 +41,48 @@ class FirestoreGratitudeDataSource : GratitudeDataSource {
             }
 
         // Flow가 취소될 때 스냅샷 리스너 해제
+        awaitClose { subscription.remove() }
+    }
+
+    // 👇👇👇 기간 필터링 쿼리 로직 함수 추가 👇👇👇
+    fun getEntriesByDateRange(
+        userId: String,
+        startDate: Date? = null,
+        endDate: Date? = null
+    ): Flow<List<GratitudeEntry>> = callbackFlow {
+        var query: Query = firestore.collection(collectionName)
+            .whereEqualTo("userId", userId) // 사용자 ID 필터링 (필수)
+
+        // 시작 날짜/시간 필터 추가
+        if (startDate != null) {
+            query = query.whereGreaterThanOrEqualTo("timestamp", startDate)
+        }
+
+        // 종료 날짜/시간 필터 추가
+        if (endDate != null) {
+            query = query.whereLessThanOrEqualTo("timestamp", endDate)
+        }
+
+        // 정렬 조건 추가 (기간 필터링 시에도 보통 시간 순서 정렬)
+        // Firestore 쿼리는 필터링된 필드(timestamp)와 정렬 필드(timestamp)가 같거나
+        // 첫 번째 정렬 필드와 첫 번째 필터링 필드가 같아야 합니다. (복합 인덱스 필요)
+        // 현재 userId로 필터링하고 timestamp로 필터링/정렬하므로 복합 인덱스 필요.
+        // 이전에 timestamp와 userId로 인덱스 만들었으니 문제 없을 것.
+        query = query.orderBy("timestamp", Query.Direction.DESCENDING)
+        // TODO: 필요시 secondary sort 필드 추가 (예: 문서 ID)
+        // query = query.orderBy("__name__", Query.Direction.ASCENDING)
+
+
+        val subscription = query.addSnapshotListener { snapshot, exception ->
+            if (exception != null) {
+                close(exception)
+                return@addSnapshotListener
+            }
+            snapshot?.toObjects(GratitudeEntry::class.java)?.let { entries ->
+                trySend(entries)
+            } ?: trySend(emptyList())
+        }
+
         awaitClose { subscription.remove() }
     }
 

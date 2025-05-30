@@ -17,9 +17,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.dhkim.gamsahanilsang.data.datasource.FirestoreGratitudeDataSource
 import com.dhkim.gamsahanilsang.data.datasource.GratitudeDataSource
-import com.dhkim.gamsahanilsang.data.repository.GratitudeRepositoryImpl
+import com.dhkim.gamsahanilsang.data.datasource.remote.FirestoreGratitudeDataSource
+import com.dhkim.gamsahanilsang.data.repository.FirestoreGratitudeRepositoryImpl
 import com.dhkim.gamsahanilsang.domain.repository.RemoteGratitudeRepository
 import com.dhkim.gamsahanilsang.presentation.screen.AddGratitudeScreen
 import com.dhkim.gamsahanilsang.presentation.screen.MainScreen
@@ -42,7 +42,7 @@ fun AppNavigation(
     authViewModel: AuthViewModel = viewModel(), // AuthViewModel 주입
     gratitudeListViewModel: GratitudeListViewModel = viewModel {
         val dataSource: GratitudeDataSource = FirestoreGratitudeDataSource()
-        val repository: RemoteGratitudeRepository = GratitudeRepositoryImpl(dataSource)
+        val repository: RemoteGratitudeRepository = FirestoreGratitudeRepositoryImpl(dataSource as FirestoreGratitudeDataSource)
         GratitudeListViewModel(repository)
     }
 

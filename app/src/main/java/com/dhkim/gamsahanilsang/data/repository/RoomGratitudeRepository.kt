@@ -5,7 +5,7 @@ import com.dhkim.gamsahanilsang.data.dao.GratitudeDao
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.model.GratitudeFilter
 import com.dhkim.gamsahanilsang.domain.model.SortOrder
-import com.dhkim.gamsahanilsang.domain.repository.LocalGratitudeRepository
+import com.dhkim.gamsahanilsang.domain.repository.RoomGratitudeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -15,7 +15,7 @@ import java.util.Date
 import java.util.Locale
 
 private val ROOM_DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-class RoomGratitudeRepository(private val gratitudeDao: GratitudeDao) : LocalGratitudeRepository {
+class RoomGratitudeRepository(private val gratitudeDao: GratitudeDao) : RoomGratitudeRepository {
     override suspend fun saveGratitude(item: GratitudeItem) {
         withContext(Dispatchers.IO) {
             gratitudeDao.insert(item)

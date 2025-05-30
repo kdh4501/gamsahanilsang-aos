@@ -3,14 +3,14 @@ package com.dhkim.gamsahanilsang.data.repository
 import com.dhkim.gamsahanilsang.data.dao.GratitudeDao
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.model.GratitudeFilter
-import com.dhkim.gamsahanilsang.domain.repository.LocalGratitudeRepository
+import com.dhkim.gamsahanilsang.domain.repository.RoomGratitudeRepository
 import kotlinx.coroutines.flow.Flow
 
 // Room 기반 감사 기록 레포지토리 구현체
 class RoomGratitudeRepositoryImpl(
     // 생성자를 통해 Room DAO 의존성 주입
     private val gratitudeDao: GratitudeDao
-) : LocalGratitudeRepository  {
+) : RoomGratitudeRepository {
     override suspend fun saveGratitude(item: GratitudeItem) {
         gratitudeDao.insert(item)
     }

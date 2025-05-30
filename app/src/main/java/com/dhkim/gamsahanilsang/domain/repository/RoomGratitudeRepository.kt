@@ -5,7 +5,7 @@ import com.dhkim.gamsahanilsang.domain.model.GratitudeFilter
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
-interface LocalGratitudeRepository {
+interface RoomGratitudeRepository {
     suspend fun saveGratitude(item: GratitudeItem)
     suspend fun getAllGratitudes(): List<GratitudeItem>
     suspend fun update(item: GratitudeItem)

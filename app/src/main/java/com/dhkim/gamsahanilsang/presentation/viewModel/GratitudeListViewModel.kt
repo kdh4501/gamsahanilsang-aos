@@ -3,8 +3,10 @@ package com.dhkim.gamsahanilsang.presentation.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dhkim.gamsahanilsang.data.datasource.remote.FirestoreGratitudeDataSource
 import com.dhkim.gamsahanilsang.domain.model.GratitudeEntry
 import com.dhkim.gamsahanilsang.domain.repository.RemoteGratitudeRepository
+import com.dhkim.gamsahanilsang.domain.repository.RoomGratitudeRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +16,10 @@ import kotlinx.coroutines.launch
 
 class GratitudeListViewModel(
     // 생성자를 통해 RemoteGratitudeRepository 의존성을 주입받습니다.
-    private val gratitudeRepository: RemoteGratitudeRepository
+    private val authViewModel: AuthViewModel,
+    private val roomRepository: RoomGratitudeRepository,
+    private val firestoreRepository: RemoteGratitudeRepository,
+    private val firestoreDataSource: FirestoreGratitudeDataSource
 ) : ViewModel() {
     // UI 상태를 나타내는 StateFlow. 이 상태를 UI(Composable)에서 관찰합니다.
     private val _uiState = MutableStateFlow(GratitudeListUiState())
@@ -47,7 +52,7 @@ class GratitudeListViewModel(
 
             // Repository에서 감사 기록 목록 Flow를 가져와서 수집(collect)합니다.
             // Firestore 데이터가 변경되면 이 Flow가 새로운 데이터를 emit하고, collect 블록이 다시 실행됩니다.
-            gratitudeRepository.getGratitudeEntries(userId)
+            firestoreRepository.getGratitudeEntries(userId)
                 .catch { e -> // Flow 처리 중 예외 발생 시
                     // 에러 상태로 UI 업데이트
                     _uiState.value = _uiState.value.copy(
@@ -82,7 +87,7 @@ class GratitudeListViewModel(
             // TODO: (옵션) 기록 추가 중 로딩 상태나 UI 피드백 표시 로직 추가
 
             // Repository에 기록 추가 요청
-            val result = gratitudeRepository.addGratitudeEntry(userId, entry)
+            val result = firestoreRepository.addGratitudeEntry(userId, entry)
 
             // 결과 처리
             result.onSuccess {
@@ -109,7 +114,7 @@ class GratitudeListViewModel(
             // TODO: (옵션) 기록 삭제 중 로딩 상태나 UI 피드백 표시 로직 추가
 
             // Repository에 기록 삭제 요청
-            val result = gratitudeRepository.deleteGratitudeEntry(userId, entryId)
+            val result = firestoreRepository.deleteGratitudeEntry(userId, entryId)
 
             // 결과 처리
             result.onSuccess {
@@ -145,7 +150,7 @@ class GratitudeListViewModel(
             // TODO: (옵션) 업데이트 중 로딩 상태나 UI 피드백 표시 로직 추가
 
             // Repository에 기록 업데이트 요청
-            val result = gratitudeRepository.updateGratitudeEntry(userId, updatedEntry)
+            val result = firestoreRepository.updateGratitudeEntry(userId, updatedEntry)
 
             // 결과 처리
             result.onSuccess {

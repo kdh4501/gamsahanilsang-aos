@@ -2,10 +2,10 @@ package com.dhkim.gamsahanilsang.domain.usecase
 
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.model.GratitudeFilter
-import com.dhkim.gamsahanilsang.domain.repository.LocalGratitudeRepository
+import com.dhkim.gamsahanilsang.domain.repository.RoomGratitudeRepository
 import kotlinx.coroutines.flow.Flow
 
-class GratitudeUseCase(private val repository: LocalGratitudeRepository) {
+class GratitudeUseCase(private val repository: RoomGratitudeRepository) {
     suspend fun execute(gratitudeItem: GratitudeItem) {
         repository.saveGratitude(gratitudeItem)
     }

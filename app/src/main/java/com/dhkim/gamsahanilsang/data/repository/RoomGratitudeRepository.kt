@@ -6,15 +6,14 @@ import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.model.GratitudeFilter
 import com.dhkim.gamsahanilsang.domain.model.SortOrder
 import com.dhkim.gamsahanilsang.domain.repository.RoomGratitudeRepository
+import com.dhkim.gamsahanilsang.utils.DateUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
+import java.time.temporal.TemporalAccessor
 import java.util.Date
-import java.util.Locale
 
-private val ROOM_DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 class RoomGratitudeRepository(private val gratitudeDao: GratitudeDao) : RoomGratitudeRepository {
     override suspend fun saveGratitude(item: GratitudeItem) {
         withContext(Dispatchers.IO) {
@@ -70,14 +69,14 @@ class RoomGratitudeRepository(private val gratitudeDao: GratitudeDao) : RoomGrat
         }
     }
 
-    override fun getGratitudeItemsByDateRange(
+    override suspend fun getGratitudeItemsByDateRange(
         startDate: Date?,
         endDate: Date?
     ): Flow<List<GratitudeItem>> {
         // Date 객체를 Room DAO가 사용하는 String 포맷으로 변환
         // null이면 DAO 기본값에 맞게 null 또는 빈 날짜 문자열 전달 고려
-        val startDateStr = startDate?.let { ROOM_DATE_FORMAT.format(it) } // Date -> String 변환
-        val endDateStr = endDate?.let { ROOM_DATE_FORMAT.format(it) } // Date -> String 변환
+        val startDateStr = startDate?.let { DateUtils.ROOM_DATE_FORMATTER.format(it as TemporalAccessor?) } // Date -> String 변환
+        val endDateStr = endDate?.let { DateUtils.ROOM_DATE_FORMATTER.format(it as TemporalAccessor?) } // Date -> String 변환
 
         // TODO: Room DAO의 적절한 필터링 함수 호출
         // GratitudeDao의 getFilterGratitudeItemsNewest, getFilterGratitudeItemsOldest, getFilterGratitudeItemsAlphabetical

@@ -22,7 +22,7 @@ interface RoomGratitudeRepository {
      * @param endDate 종료 날짜/시간 (null이면 종료 제한 없음)
      * @return 기간 필터링된 GratitudeItem 목록 Flow
      */
-    fun getGratitudeItemsByDateRange(
+    suspend fun getGratitudeItemsByDateRange(
         startDate: Date? = null,
         endDate: Date? = null
     ): Flow<List<GratitudeItem>> // Room 모델 반환 (DataSource 역할의 DAO 함수와 일치)

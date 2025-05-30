@@ -11,7 +11,12 @@ object DateUtils {
     object DateFormatters {
         val DATE_FORMAT = "yyyy-MM-dd"
     }
+    val ROOM_DATE_FORMATTER: DateTimeFormatter =
+        DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.getDefault())
 
+    // UI 표시 등에 사용될 날짜/시간 포맷터 (예: yyyy.MM.dd HH:mm) (스레드 안전)
+    val UI_DATE_TIME_FORMATTER: DateTimeFormatter =
+        DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm", Locale.getDefault())
     /**
      * "yyyy-MM-dd" 형식의 날짜 문자열을 받아서
      * 오늘 날짜면 "오늘 M.d" 형식으로,

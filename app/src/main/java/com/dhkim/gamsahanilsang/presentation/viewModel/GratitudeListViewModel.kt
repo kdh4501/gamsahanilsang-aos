@@ -8,15 +8,17 @@ import com.dhkim.gamsahanilsang.domain.model.GratitudeEntry
 import com.dhkim.gamsahanilsang.domain.repository.RemoteGratitudeRepository
 import com.dhkim.gamsahanilsang.domain.repository.RoomGratitudeRepository
 import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class GratitudeListViewModel(
+@HiltViewModel
+class GratitudeListViewModel @Inject constructor(
     // 생성자를 통해 RemoteGratitudeRepository 의존성을 주입받습니다.
-    private val authViewModel: AuthViewModel,
     private val roomRepository: RoomGratitudeRepository,
     private val firestoreRepository: RemoteGratitudeRepository,
     private val firestoreDataSource: FirestoreGratitudeDataSource

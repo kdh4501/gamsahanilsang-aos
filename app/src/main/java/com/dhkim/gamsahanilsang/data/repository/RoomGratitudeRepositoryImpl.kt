@@ -4,7 +4,10 @@ import com.dhkim.gamsahanilsang.data.dao.GratitudeDao
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.model.GratitudeFilter
 import com.dhkim.gamsahanilsang.domain.repository.RoomGratitudeRepository
+import com.dhkim.gamsahanilsang.utils.DateUtils
 import kotlinx.coroutines.flow.Flow
+import java.time.temporal.TemporalAccessor
+import java.util.Date
 
 // Room 기반 감사 기록 레포지토리 구현체
 class RoomGratitudeRepositoryImpl(
@@ -47,6 +50,20 @@ class RoomGratitudeRepositoryImpl(
             endDate.toString(), keyword) // 예시: 일단 Newest만 호출
         // 또는 기존 getFilterGratitudeItems 함수 사용
         // return gratitudeDao.getFilterGratitudeItems(startDate, endDate, keyword, sortOrder.name) // filter 객체와 DAO 함수의 인자 매핑 필요
+    }
+
+
+    override suspend fun getGratitudeItemsByDateRange(
+        startDate: Date?,
+        endDate: Date?
+    ): Flow<List<GratitudeItem>> {
+        val startDateStr = startDate?.let { DateUtils.ROOM_DATE_FORMATTER.format(it as TemporalAccessor?) } // Date -> String 변환
+        val endDateStr = endDate?.let {DateUtils.ROOM_DATE_FORMATTER.format(it as TemporalAccessor?) } // Date -> String 변환
+        return gratitudeDao.getFilterGratitudeItemsNewest(
+            startDate = startDateStr ?: "0000-01-01", // DAO 기본값 고려
+            endDate = endDateStr ?: "9999-12-31", // DAO 기본값 고려
+            keyword = null // 기간 필터만 적용하므로 키워드는 null
+        )
     }
 
 }

@@ -13,14 +13,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.dhkim.gamsahanilsang.data.datasource.GratitudeDataSource
-import com.dhkim.gamsahanilsang.data.datasource.remote.FirestoreGratitudeDataSource
-import com.dhkim.gamsahanilsang.data.repository.FirestoreGratitudeRepositoryImpl
-import com.dhkim.gamsahanilsang.domain.repository.RemoteGratitudeRepository
 import com.dhkim.gamsahanilsang.presentation.screen.AddGratitudeScreen
 import com.dhkim.gamsahanilsang.presentation.screen.MainScreen
 import com.dhkim.gamsahanilsang.presentation.screen.SettingsScreen
@@ -39,13 +35,8 @@ object AppDestinations {
 
 @Composable
 fun AppNavigation(
-    authViewModel: AuthViewModel = viewModel(), // AuthViewModel 주입
-    gratitudeListViewModel: GratitudeListViewModel = viewModel {
-        val dataSource: GratitudeDataSource = FirestoreGratitudeDataSource()
-        val repository: RemoteGratitudeRepository = FirestoreGratitudeRepositoryImpl(dataSource as FirestoreGratitudeDataSource)
-        GratitudeListViewModel(repository)
-    }
-
+    authViewModel: AuthViewModel = hiltViewModel(), // AuthViewModel 주입
+    gratitudeListViewModel: GratitudeListViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController() // NavController 생성
     val authState by authViewModel.authState.collectAsState() // 로그인 상태 관찰

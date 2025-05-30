@@ -9,8 +9,12 @@ import com.dhkim.gamsahanilsang.domain.repository.LocalGratitudeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 
+private val ROOM_DATE_FORMAT = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 class RoomGratitudeRepository(private val gratitudeDao: GratitudeDao) : LocalGratitudeRepository {
     override suspend fun saveGratitude(item: GratitudeItem) {
         withContext(Dispatchers.IO) {
@@ -64,6 +68,27 @@ class RoomGratitudeRepository(private val gratitudeDao: GratitudeDao) : LocalGra
                 gratitudeDao.getFilterGratitudeItemsAlphabetical(startDate, endDate, keyword)
             }
         }
+    }
+
+    override fun getGratitudeItemsByDateRange(
+        startDate: Date?,
+        endDate: Date?
+    ): Flow<List<GratitudeItem>> {
+        // Date 객체를 Room DAO가 사용하는 String 포맷으로 변환
+        // null이면 DAO 기본값에 맞게 null 또는 빈 날짜 문자열 전달 고려
+        val startDateStr = startDate?.let { ROOM_DATE_FORMAT.format(it) } // Date -> String 변환
+        val endDateStr = endDate?.let { ROOM_DATE_FORMAT.format(it) } // Date -> String 변환
+
+        // TODO: Room DAO의 적절한 필터링 함수 호출
+        // GratitudeDao의 getFilterGratitudeItemsNewest, getFilterGratitudeItemsOldest, getFilterGratitudeItemsAlphabetical
+        // 또는 getFilterGratitudeItems 함수를 활용합니다.
+        // 각 DAO 함수는 startDate, endDate, keyword를 String?으로 받습니다.
+        // 여기서는 getFilterGratitudeItemsNewest 함수를 호출한다고 가정하며, keyword는 null로 전달합니다.
+        return gratitudeDao.getFilterGratitudeItemsNewest(
+            startDate = startDateStr ?: "0000-01-01", // DAO 기본값 고려
+            endDate = endDateStr ?: "9999-12-31", // DAO 기본값 고려
+            keyword = null // 기간 필터만 적용하므로 키워드는 null
+        )
     }
 
 

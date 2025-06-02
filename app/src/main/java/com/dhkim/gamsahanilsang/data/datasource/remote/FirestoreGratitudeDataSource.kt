@@ -5,6 +5,7 @@ import com.dhkim.gamsahanilsang.domain.model.GratitudeEntry
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
+import jakarta.inject.Inject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -13,9 +14,10 @@ import java.util.Date
 
 
 // Firestore 기반 감사 기록 데이터 소스 구현체
-class FirestoreGratitudeDataSource : GratitudeDataSource {
-
-    private val firestore = FirebaseFirestore.getInstance()
+class FirestoreGratitudeDataSource @Inject constructor(
+    // Hilt가 ProvidesModule에서 제공하는 FirebaseFirestore 인스턴스를 주입해 줄 것입니다.
+    private val firestore: FirebaseFirestore // FirebaseFirestore 인스턴스 주입받음
+): GratitudeDataSource {
     private val collectionName = "gratitude_entries" // Firestore 컬렉션 이름
 
     // 특정 사용자의 감사 기록 목록 실시간 스트림 제공

@@ -9,6 +9,8 @@ import com.dhkim.gamsahanilsang.data.repository.FirestoreGratitudeRepositoryImpl
 import com.dhkim.gamsahanilsang.data.repository.RoomGratitudeRepositoryImpl
 import com.dhkim.gamsahanilsang.domain.usecase.GratitudeUseCase
 import com.dhkim.gamsahanilsang.presentation.common.DialogManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -82,5 +84,19 @@ object ProvidesModule {
         dataSource: FirestoreGratitudeDataSource // 위에서 제공한 DataSource 주입
     ): FirestoreGratitudeRepositoryImpl {
         return FirestoreGratitudeRepositoryImpl(dataSource)
+    }
+
+    @Provides // 의존성 제공 함수
+    @Singleton // 앱 전체에서 하나의 인스턴스만 필요
+    fun provideFirebaseAuth(): FirebaseAuth {
+        // FirebaseAuth 인스턴스를 가져와서 반환
+        return FirebaseAuth.getInstance()
+    }
+
+    @Provides // 의존성 제공 함수
+    @Singleton // 앱 전체에서 하나의 인스턴스만 필요
+    fun provideFirebaseFirestore(): FirebaseFirestore {
+        // FirebaseFirestore 인스턴스를 가져와서 반환
+        return FirebaseFirestore.getInstance()
     }
 }

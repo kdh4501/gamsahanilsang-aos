@@ -2,7 +2,7 @@ package com.dhkim.gamsahanilsang.presentation.di
 
 import android.content.Context
 import com.dhkim.gamsahanilsang.data.dao.GratitudeDao
-import com.dhkim.gamsahanilsang.data.database.AppDatabase
+import com.dhkim.gamsahanilsang.data.database.GratitudeDatabase
 import com.dhkim.gamsahanilsang.data.datasource.remote.FirestoreGratitudeDataSource
 import com.dhkim.gamsahanilsang.data.repository.FirestoreGratitudeRepositoryImpl
 import com.dhkim.gamsahanilsang.data.repository.RoomGratitudeRepositoryImpl
@@ -22,16 +22,16 @@ object ProvidesModule {
     // Room Database 제공 함수 (기존 AppModule에서 이동)
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context): AppDatabase {
+    fun provideDatabase(@ApplicationContext context: Context): GratitudeDatabase {
         // Room.databaseBuilder 호출 코드는 DatabaseModule.kt 파일에 두는 것이 더 일반적입니다.
         // 만약 DatabaseModule.kt 파일을 이미 만들었다면 이 함수는 DatabaseModule로 이동해야 합니다.
-        return AppDatabase.getDatabase(context) // 또는 Room.databaseBuilder(...)
+        return GratitudeDatabase.getDatabase(context) // 또는 Room.databaseBuilder(...)
     }
 
     // Room DAO 제공 함수 (기존 AppModule에서 이동)
     @Provides
     @Singleton // DAO도 싱글톤으로 제공
-    fun provideGratitudeDao(database: AppDatabase): GratitudeDao {
+    fun provideGratitudeDao(database: GratitudeDatabase): GratitudeDao {
         // 이 함수는 DatabaseModule.kt 파일로 이동하는 것이 더 일반적입니다.
         return database.gratitudeDao()
     }

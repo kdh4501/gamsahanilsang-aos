@@ -28,26 +28,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        /*
-        // ⭐️ 테스트용 데이터
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val today = Calendar.getInstance()
-        val yesterday = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -1) }
-        val twoDaysAgo = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, -2) }
-
-        // ✨ 테스트용 GratitudeItem 리스트 생성
-        val testData = listOf(
-            GratitudeItem(gratitudeText = "오늘 감사한 것", date = dateFormat.format(today.time)),
-            GratitudeItem(gratitudeText = "어제 감사한 것", date = dateFormat.format(yesterday.time)),
-            GratitudeItem(gratitudeText = "그저께 감사한 것", date = dateFormat.format(twoDaysAgo.time))
-        )
-
-        // ⭐️ calculateStreak 호출
-        val streak = viewModel.calculateStreak(testData)
-
-        // ⭐️ 결과를 Toast로 띄우기
-        Toast.makeText(this, "🔥 테스트 Streak 결과: ${streak}일", Toast.LENGTH_LONG).show()
-        */
         lifecycle.addObserver(authViewModel)
         notificationScheduler = NotificationScheduler(applicationContext)
         checkAndRequestNotificationPermission()
@@ -66,18 +46,6 @@ class MainActivity : ComponentActivity() {
         // 하지만 명확하게 제거하려면 여기서 removeObserver(authViewModel) 호출 가능
         lifecycle.removeObserver(authViewModel) // ViewModel 생명주기보다 먼저 종료될 때 안전하게 제거
     }
-
-//    private fun sendTestNotification() {
-//        val notificationData = com.dhkim.gamsahanilsang.domain.model.NotificationData(
-//            id = 9999,
-//            title = "테스트 알림",
-//            message = "알림 기능이 정상 동작합니다.",
-//            channelId = Constants.NOTIFICATION_CHANNEL_ID
-//        )
-//
-//        val notificationManager = NotificationManagerImpl(this)
-//        notificationManager.showNotification(notificationData)
-//    }
 
     private val requestNotificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->

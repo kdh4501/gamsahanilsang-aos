@@ -3,13 +3,16 @@ package com.dhkim.gamsahanilsang.presentation.common
 import android.content.Context
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
 import com.dhkim.gamsahanilsang.domain.model.GratitudeFilter
+import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 /**
  * Compose 환경에서 사용할 수 있는 다이얼로그 관리자
  */
-class DialogManager(private val context: Context) {
+class DialogManager @Inject constructor(
+    private val appContext: Context
+) {
     // 현재 표시 중인 다이얼로그 상태
     private val _currentDialog = MutableStateFlow<DialogType?>(null)
     val currentDialog = _currentDialog.asStateFlow()

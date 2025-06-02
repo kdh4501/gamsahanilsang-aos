@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.dhkim.gamsahanilsang.R
 import com.dhkim.gamsahanilsang.domain.model.GratitudeFilter
 import com.dhkim.gamsahanilsang.domain.model.SortOrder
@@ -70,7 +71,7 @@ fun GratitudeScreen(
     val context = LocalContext.current
 
     // 다이얼로그 관리자
-    val dialogManager = remember { DialogManager(context) }
+    val dialogManager: DialogManager = hiltViewModel()
 
     // 현재 표시 중인 다이얼로 상태 구독
     val currentDialog by dialogManager.currentDialog.collectAsState()

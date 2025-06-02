@@ -73,8 +73,8 @@ object ProvidesModule {
     // Firestore DataSource 구현체 제공 함수 (기존 AppModule에서 이동)
     @Provides
     @Singleton
-    fun provideFirestoreGratitudeDataSource(): FirestoreGratitudeDataSource {
-        return FirestoreGratitudeDataSource()
+    fun provideFirestoreGratitudeDataSource(firestore: FirebaseFirestore): FirestoreGratitudeDataSource {
+        return FirestoreGratitudeDataSource(firestore = firestore)
     }
 
     // Firestore Repository 구현체 제공 함수 (기존 AppModule에서 이동)

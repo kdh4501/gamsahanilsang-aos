@@ -3,6 +3,7 @@ package com.dhkim.gamsahanilsang.data.dao
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.dhkim.gamsahanilsang.domain.entity.GratitudeItem
@@ -10,10 +11,10 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface GratitudeDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE) // 동일 ID 충돌 시 무시
     suspend fun insert(gratitudeItem: GratitudeItem)
 
-    @Query("SELECT * FROM gratitude_items")
+    @Query("SELECT * FROM gratitude_items ORDER BY date DESC")  // date 필드 기준으로 최신순
     suspend fun getAll(): List<GratitudeItem>
 
     @Update

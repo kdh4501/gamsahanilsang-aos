@@ -10,15 +10,17 @@ import com.dhkim.gamsahanilsang.R
 import com.dhkim.gamsahanilsang.data.notification.NotificationManagerImpl
 import com.dhkim.gamsahanilsang.domain.model.NotificationData
 import com.dhkim.gamsahanilsang.utils.Constants
+import dagger.hilt.android.qualifiers.ApplicationContext
+import jakarta.inject.Inject
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
-class NotificationScheduler(
-    private val context: Context,
+class NotificationScheduler @Inject constructor(
+    @ApplicationContext private val appContext: Context,
 ) {
 
     fun scheduleDailyGratitudeNotification(hour: Int, minute: Int) {
-        val workManager = WorkManager.getInstance(context)
+        val workManager = WorkManager.getInstance(appContext)
 
         val currentDateTime = Calendar.getInstance()
         val dueDate = Calendar.getInstance().apply {
@@ -34,8 +36,8 @@ class NotificationScheduler(
 
         val notificationData = NotificationData(
             id = 1001,
-            title = context.getString(R.string.daily_notification_title),
-            message = context.getString(R.string.daily_notification_message),
+            title = appContext.getString(R.string.daily_notification_title),
+            message = appContext.getString(R.string.daily_notification_message),
             channelId = Constants.NOTIFICATION_CHANNEL_ID
         )
 
@@ -60,12 +62,12 @@ class NotificationScheduler(
 
     // 테스트용 메서드
     fun scheduleTestNotificationSeconds(delaySeconds: Int = 10) {
-        val workManager = WorkManager.getInstance(context)
+        val workManager = WorkManager.getInstance(appContext)
 
         val notificationData = NotificationData(
             id = 1001,
-            title = context.getString(R.string.daily_notification_title),
-            message = context.getString(R.string.daily_notification_message),
+            title = appContext.getString(R.string.daily_notification_title),
+            message = appContext.getString(R.string.daily_notification_message),
             channelId = Constants.NOTIFICATION_CHANNEL_ID
         )
 
@@ -91,12 +93,12 @@ class NotificationScheduler(
     fun showTestNotificationImmediately() {
         val notificationData = NotificationData(
             id = 1002,
-            title = context.getString(R.string.daily_notification_title),
-            message = context.getString(R.string.daily_notification_message),
+            title = appContext.getString(R.string.daily_notification_title),
+            message = appContext.getString(R.string.daily_notification_message),
             channelId = Constants.NOTIFICATION_CHANNEL_ID
         )
 
-        val notificationManager = NotificationManagerImpl(context)
+        val notificationManager = NotificationManagerImpl(appContext)
         notificationManager.showNotification(notificationData)
 
         Log.d("NotificationTest", "즉시 알림 표시 요청됨")

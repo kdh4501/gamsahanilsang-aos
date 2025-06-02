@@ -17,19 +17,21 @@ import com.dhkim.gamsahanilsang.presentation.ui.theme.MyTheme
 import com.dhkim.gamsahanilsang.presentation.viewModel.AuthViewModel
 import com.dhkim.gamsahanilsang.presentation.viewModel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import jakarta.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     private val authViewModel: AuthViewModel by viewModels()
-    private lateinit var notificationScheduler: NotificationScheduler
+
+    @Inject
+    lateinit var notificationScheduler: NotificationScheduler // lateinit으로 선언하고 Hilt가 주입
     @OptIn(ExperimentalMaterial3Api::class)
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 13)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         lifecycle.addObserver(authViewModel)
-        notificationScheduler = NotificationScheduler(applicationContext)
         checkAndRequestNotificationPermission()
 
         setContent {
